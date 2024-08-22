@@ -16,6 +16,7 @@
         <cds.install-cdsdk.version>8.1.1</cds.install-cdsdk.version>
         <cds.install-node.downloadUrl>https://nodejs.org/dist/</cds.install-node.downloadUrl>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <logging.support.version>3.8.3</logging.support.version>
     </properties>
     <modules>
         <module>srv</module>
