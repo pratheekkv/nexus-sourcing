@@ -15,6 +15,18 @@
       "version": "1.14.3",
       "toolsId": "3bb3de2d-0315-4cbc-b2e8-ef2b763d747c"
     },
+    "crossNavigation": {
+      "inbounds": {
+        "SourcingProject-manage": {
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          },
+          "semanticObject": "SourcingProject",
+          "action": "manage"
+        }
+      }
+    },
     "dataSources": {
       "mainService": {
         "uri": "/odata/v4/Sourcing/",
@@ -120,6 +132,9 @@
         }
       }
     }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "nexus.sourcing"
   }
 }
-

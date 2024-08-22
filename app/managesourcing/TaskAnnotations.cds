@@ -5,14 +5,21 @@ annotate service.Task with @(UI: {
   CreateHidden : true,
 
   LineItem: [
-        {
+  
+          {
             $Type: 'UI.DataField',
-            Value: description,
+            Value: externalId,
             Label : 'Task/Phase' 
         },
         {
             $Type: 'UI.DataField',
-            Value: type
+            Value: description,
+            Label : 'Description' 
+        },
+        {
+            $Type: 'UI.DataField',
+            Value: type,
+            ![@Common.FieldControl] : #ReadOnly
         },
         {
             $Type: 'UI.DataField',
@@ -31,7 +38,7 @@ annotate service.Task with @(UI: {
 }, 
 Hierarchy.RecursiveHierarchy #PhaseHierarchy: {
   $Type                 : 'Hierarchy.RecursiveHierarchyType',
-  ExternalKey           : null,
+  ExternalKey           : externalId,
   LimitedDescendantCount: LimitedDescendantCount,
   DistanceFromRoot      : DistanceFromRoot,
   DrillState            : DrillState,
@@ -39,7 +46,7 @@ Hierarchy.RecursiveHierarchy #PhaseHierarchy: {
   MatchedDescendantCount: MatchedDescendantCount
 },
 Aggregation.RecursiveHierarchy #PhaseHierarchy: {
-    NodeProperty            : ID,
+    NodeProperty            : externalId,
     ParentNavigationProperty: Parent
 },
 Capabilities.FilterRestrictions : {

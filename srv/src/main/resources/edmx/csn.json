@@ -2,7 +2,8 @@
   "definitions": {
     "Sourcing": {
       "@source": "SourcingService.cds",
-      "kind": "service"
+      "kind": "service",
+      "@odata.apply.transformations": true
     },
     "Sourcing.Project": {
       "kind": "entity",
@@ -429,13 +430,24 @@
         {
           "$Type": "UI.DataField",
           "Value": {
+            "=": "externalId"
+          },
+          "Label": "Task/Phase"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
             "=": "description"
-          }
+          },
+          "Label": "Description"
         },
         {
           "$Type": "UI.DataField",
           "Value": {
             "=": "type"
+          },
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
           }
         },
         {
@@ -458,7 +470,9 @@
         }
       ],
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.$Type": "Hierarchy.RecursiveHierarchyType",
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.ExternalKey": null,
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.ExternalKey": {
+        "=": "externalId"
+      },
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.LimitedDescendantCount": {
         "=": "LimitedDescendantCount"
       },
@@ -475,7 +489,7 @@
         "=": "MatchedDescendantCount"
       },
       "@Aggregation.RecursiveHierarchy#PhaseHierarchy.NodeProperty": {
-        "=": "ID"
+        "=": "externalId"
       },
       "@Aggregation.RecursiveHierarchy#PhaseHierarchy.ParentNavigationProperty": {
         "=": "Parent"
@@ -590,6 +604,9 @@
           "@Common.Label": "{i18n>ChangedBy}",
           "@Core.Description": "{i18n>UserID.Description}"
         },
+        "externalId": {
+          "type": "cds.String"
+        },
         "sourcingProject": {
           "type": "cds.Association",
           "cardinality": {
@@ -636,7 +653,7 @@
           "type": "cds.String"
         },
         "ParentID": {
-          "type": "cds.UUID"
+          "type": "cds.String"
         },
         "LimitedDescendantCount": {
           "@Core.Computed": true,
@@ -668,7 +685,7 @@
             {
               "ref": [
                 "Parent",
-                "ID"
+                "externalId"
               ]
             },
             "=",
@@ -2318,6 +2335,9 @@
           "@Common.Label": "{i18n>ChangedBy}",
           "@Core.Description": "{i18n>UserID.Description}"
         },
+        "externalId": {
+          "type": "cds.String"
+        },
         "sourcingProject": {
           "type": "cds.Association",
           "cardinality": {
@@ -2364,7 +2384,7 @@
           "type": "cds.String"
         },
         "ParentID": {
-          "type": "cds.UUID"
+          "type": "cds.String"
         },
         "LimitedDescendantCount": {
           "@Core.Computed": true,
@@ -2396,7 +2416,7 @@
             {
               "ref": [
                 "Parent",
-                "ID"
+                "externalId"
               ]
             },
             "=",

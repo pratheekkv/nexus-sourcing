@@ -104,22 +104,44 @@ sap.ui.define(
             await this.getExtensionAPI().getEditFlow().editDocument(oContext);
           },
 
-          enableCreate: function (value, parentContext) {
-            debugger;
-            // >             switch (parentContext?.getProperty("nodeType")) {
-            // >                 case "Zone":
-            // >                     return value !== "Zone"; // Anything but 'Zone' under 'Zone'
-            // >  
-            // >                 case "Intermediary":
-            // >                     return value === "Line"; // Only 'Line' under 'Intermediary'
-            // >  
-            // >                 case "Line":
-            // >                     return false; // Nothing under 'Line'
-            // >  
-            // >                 default:
-            // >                     return value === "Zone"; // Only 'Zone' at root level
-            // >             }
-                     }
+          createTask: async function (oEvent) {
+
+            var oListBindings = this.getView().byId('taskList').getModel().bindList(this.getView().byId('taskList').getBindingContext().getPath()+'/tasks');
+            this.getView().getModel("ui").setProperty("/isBusy", true);
+            await this.editFlow.createDocument(oListBindings, {
+                creationMode: "Inline",
+                data: {
+                    type : "task" 
+                }
+            });
+            this.getView().byId('taskList').refresh();
+            this.getView().getModel("ui").setProperty("/isBusy", false);
+         },
+
+         createPhase: async function (oEvent) {
+            var oListBindings = this.getView().byId('taskList').getModel().bindList(this.getView().byId('taskList').getBindingContext().getPath()+'/tasks');
+            this.getView().getModel("ui").setProperty("/isBusy", true);
+
+            var oSelectedContext = this.getView().byId('taskList').getSelectedContexts()[0];
+            var taskType = null, phaseId = null;
+            if(oSelectedContext){
+                taskType = await oSelectedContext?.requestProperty("type");
+                if(taskType === "phase"){ 
+                    phaseId = await oSelectedContext?.requestProperty("ID");
+                }
+            }
+            
+
+            await this.editFlow.createDocument(oListBindings, {
+                creationMode: "Inline",
+                data: {
+                    type : "phase",
+                    ParentID : phaseId 
+                }
+            });
+            this.getView().byId('taskList').refresh();
+            this.getView().getModel("ui").setProperty("/isBusy", false);
+         }
         
         
 

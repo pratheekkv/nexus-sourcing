@@ -1,4 +1,5 @@
 using { com.sap.sourcing.db as db } from '../db/index';
+@odata.apply.transformations
 service Sourcing {
     entity Project  as projection on db.SourcingProject;
     entity Task      as projection on db.Task ;

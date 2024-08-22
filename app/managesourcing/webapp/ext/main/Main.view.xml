@@ -3,7 +3,7 @@
 		xmlns:u="sap.ui.unified"
 		xmlns:mvc="sap.ui.core.mvc"
         xmlns:macros="sap.fe.macros"
-		xmlns:table="sap.fe.macros.table"
+		xmlns:macrosTable="sap.fe.macros.table"
 		xmlns="sap.m" controllerName="managesourcing.ext.main.Main"
         modelContextChange="onModelContextChange">
 		<NavContainer id="wizardNavContainer">
@@ -34,9 +34,16 @@
 									<HBox width="100%" justifyContent="End">
 										<Button text="Edit" press="onEdit" />
 									</HBox>											
-                                <macros:Table metaPath="tasks/@com.sap.vocabularies.UI.v1.LineItem" id="taskList" headerVisible="false">
-									<creationMode name="InlineCreationRows" inlineCreationRowsHiddenInEditMode="true"   />
-								</macros:Table>
+                                <macros:TreeTable metaPath="tasks/@com.sap.vocabularies.UI.v1.LineItem" id="taskList" headerVisible="false" 
+									selectionMode="Single" busy="{ui>/isBusy}" hierarchyQualifier="PhaseHierarchy">
+									<creationMode name="Inline" inlineCreationRowsHiddenInEditMode="true"   />
+									<macros:actions>
+										<macrosTable:ActionGroup text="Create" key="createActionGroup">
+											<macrosTable:Action text="Create Phase" press=".createPhase" key="phase" />
+											<macrosTable:Action text="Create Task" press=".createTask"  key="task" />
+										</macrosTable:ActionGroup>
+								</macros:actions>
+								</macros:TreeTable>
 							</WizardStep>
 							<WizardStep id="eventsStep"
 										title="Events and Documents"

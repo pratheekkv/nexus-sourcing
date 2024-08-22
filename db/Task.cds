@@ -6,6 +6,7 @@ using { com.sap.sourcing.db.SourcingProject as SourcingProject } from './Sourcin
 using { com.sap.sourcing.db.Event as Event } from './Event';
 
 entity Task : cuid, managed {
+  externalId : String;
   sourcingProject: Association to one SourcingProject;
   description: String;
   type: String enum { phase = 'phase'; task = 'task'; };
@@ -13,7 +14,7 @@ entity Task : cuid, managed {
   owner: String;
   dueDate: Date;
   approverReviewer: String;
-  ParentID  : type of ID;
+  ParentID  : type of externalId;
 
   @Core.Computed: true
   LimitedDescendantCount : Integer64;
@@ -31,6 +32,6 @@ entity Task : cuid, managed {
   MatchedDescendantCount : Integer64;
 
   
-  Parent : Association to one Task on Parent.ID = ParentID;
+  Parent : Association to one Task on Parent.externalId = ParentID;
   events: Association to one Event;
 }
