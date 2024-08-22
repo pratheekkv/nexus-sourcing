@@ -26,3 +26,8 @@ cds:
     auto-config:
       enabled: false
   query.hierarchy.enabled: true
+---
+spring:
+  config.activate.on-profile: cloud
+cds:
+  query.hierarchy.enabled: true

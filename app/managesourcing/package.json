@@ -26,5 +26,10 @@
       "ui5-task-zipper",
       "mbt"
     ]
+  },
+  "cds": {
+    "requires": {
+      "destinations": true
+    }
   }
 }
