@@ -63,8 +63,8 @@ modules:
           URL: ~{srv-api/srv-url}
           sap.cloud.service: nexus.sourcing
         - Name: nexus-sourcing-html5-repo-host
-          ServiceInstanceName: nexus-sourcin-html5-repo-host
-          ServiceKeyName: nexus-sourcin-html5-repo-host-key
+          ServiceInstanceName: nexus-sourcing-html5-repo-host
+          ServiceKeyName: nexus-sourcing-html5-repo-host-key
           sap.cloud.service: nexus.sourcing
         - Authentication: OAuth2UserTokenExchange
           Name: nexus-sourcing-uaa
