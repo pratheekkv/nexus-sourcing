@@ -1,4 +1,4 @@
-package com.sap.cds.cds-services-archetype;
+package com.sap.nexus.sourcing;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

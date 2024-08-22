@@ -16,6 +16,7 @@ default-env.json
 
 **/node/
 **/node_modules/
+node_modules
 
 **/.mta/
 *.mtar
