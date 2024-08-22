@@ -19,12 +19,13 @@ default-env.json
 node_modules
 
 **/.mta/
-*.mtar
+/resources
 
 *.log*
 gc_history*
 hs_err*
 *.tgz
+*.zip
 *.iml
 
 .vscode
