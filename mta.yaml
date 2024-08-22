@@ -13,6 +13,7 @@ modules:
   requires:
   - name: nexus-sourcing-db
   - name: nexus-sourcing-uaa
+  - name: application-logs
   provides:
   - name: srv-api
     properties:
@@ -99,6 +100,11 @@ modules:
     - npm run build:cf
     supported-platforms: []
 resources:
+- name: application-logs
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: application-logs
+    service-plan: lite
 - name: nexus-sourcing-db
   type: com.sap.xs.hdi-container
   parameters:
