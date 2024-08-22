@@ -12,7 +12,7 @@ modules:
     SPRING_PROFILES_ACTIVE: cloud,sandbox
   requires:
   - name: nexus-sourcing-db
-  - name: nexus-sourcing-auth
+  - name: nexus-sourcing-uaa
   provides:
   - name: srv-api
     properties:
@@ -43,11 +43,11 @@ modules:
   - name: nexus-sourcing-uaa
     parameters:
       service-key:
-        name: nexus-sourcin-uaa-key
-  - name: nexus-sourcin-html5-repo-host
+        name: nexus-sourcing-uaa-key
+  - name: nexus-sourcing-html5-repo-host
     parameters:
       service-key:
-        name: nexus-sourcin-html5-repo-host-key
+        name: nexus-sourcing-html5-repo-host-key
   - name: srv-api
   - name: nexus-sourcing-destination
     parameters:
@@ -58,18 +58,18 @@ modules:
         destinations:
         - Authentication: OAuth2UserTokenExchange
           Name: nexus-sourcing-app-srv
-          TokenServiceInstanceName: nexus-sourcin-uaa
-          TokenServiceKeyName: nexus-sourcin-uaa-key
+          TokenServiceInstanceName: nexus-sourcing-uaa
+          TokenServiceKeyName: nexus-sourcing-uaa-key
           URL: ~{srv-api/srv-url}
           sap.cloud.service: nexus.sourcing
-        - Name: nexus-sourcin-html5-repo-host
+        - Name: nexus-sourcing-html5-repo-host
           ServiceInstanceName: nexus-sourcin-html5-repo-host
           ServiceKeyName: nexus-sourcin-html5-repo-host-key
           sap.cloud.service: nexus.sourcing
         - Authentication: OAuth2UserTokenExchange
-          Name: nexus-sourcin-uaa
-          ServiceInstanceName: nexus-sourcin-uaa
-          ServiceKeyName: nexus-sourcin-uaa-key
+          Name: nexus-sourcing-uaa
+          ServiceInstanceName: nexus-sourcing-uaa
+          ServiceKeyName: nexus-sourcing-uaa-key
           sap.cloud.service: nexus.sourcing
         existing_destinations_policy: update
   build-parameters:

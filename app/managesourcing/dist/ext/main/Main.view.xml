@@ -1,0 +1,73 @@
+<mvc:View xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+        xmlns:macros="sap.fe.macros"
+		xmlns:macrosTable="sap.fe.macros.table"
+		xmlns="sap.m" controllerName="managesourcing.ext.main.Main"
+        modelContextChange="onModelContextChange">
+		<NavContainer id="wizardNavContainer">
+			<pages>
+				<Page
+				id="wizardContentPage"
+				showHeader="false">
+					<content>
+						<Wizard id="createProjectWizard" class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
+								showNextButton="false" renderMode="Page">
+							<WizardStep id="overviewStep"
+										title="Project Summary"
+										icon="sap-icon://cart">
+									<HBox width="100%" justifyContent="End">
+										<Button text="Edit" press="onEdit" />
+									</HBox>	
+                                    <macros:Form metaPath="@UI.FieldGroup#GeneralInformation" id="overview">
+                                        <macros:layout type="ResponsiveGridLayout" columnsM="1" singleContainerFullSize="true" labelSpanL="1" labelSpanM="1" labelSpanS="1" emptySpanL="7" />
+                                    </macros:Form>
+                                    <macros:Form metaPath="@UI.FieldGroup#ExternalSystemIntegration" id="externalSystemIntegration">
+                                        <macros:layout type="ResponsiveGridLayout" columnsM="1" singleContainerFullSize="true" labelSpanL="1" labelSpanM="1" labelSpanS="1" emptySpanL="7" />
+                                    </macros:Form>									
+							</WizardStep>
+
+							<WizardStep id="taskStep"
+										title="Tasks"
+										icon="sap-icon://cart">
+									<HBox width="100%" justifyContent="End">
+										<Button text="Edit" press="onEdit" />
+									</HBox>											
+                                <macros:TreeTable metaPath="tasks/@com.sap.vocabularies.UI.v1.LineItem" id="taskList" headerVisible="false" 
+									selectionMode="Single" busy="{ui>/isBusy}" hierarchyQualifier="PhaseHierarchy">
+									<creationMode name="Inline" inlineCreationRowsHiddenInEditMode="true"   />
+									<macros:actions>
+										<macrosTable:ActionGroup text="Create" key="createActionGroup">
+											<macrosTable:Action text="Create Phase" press=".createPhase" key="phase" />
+											<macrosTable:Action text="Create Task" press=".createTask"  key="task" />
+										</macrosTable:ActionGroup>
+								</macros:actions>
+								</macros:TreeTable>
+							</WizardStep>
+							<WizardStep id="eventsStep"
+										title="Events and Documents"
+										icon="sap-icon://cart">
+                                         <!-- <macros:Form metaPath="@com.sap.vocabularies.UI.v1.FieldGroup#GeneralInformation" id="myForm" title="Something Else" /> -->
+							</WizardStep>
+							<WizardStep id="messageBoardStep"
+										title="Message Board"
+										icon="sap-icon://cart">
+                                         <!-- <macros:Form metaPath="@com.sap.vocabularies.UI.v1.FieldGroup#GeneralInformation" id="myForm" title="Something Else" /> -->
+
+							</WizardStep>
+						</Wizard>
+					</content>
+					<footer>
+						<OverflowToolbar>
+							<ToolbarSpacer/>
+							<Button text="Previous Step" visible="{= !${ui>/isEditable} }" press="onDialogBackButton" />
+							<Button text="Next Step" type="Emphasized" visible="{= !${ui>/isEditable} }" press="onDialogNextButton" />
+							<Button text="Save" type="Emphasized" visible="{ui>/isEditable}" press="handleWizardSave" />
+							<Button	text="Cancel" type="Transparent" visible="{ui>/isEditable}" press="handleWizardCancel"/>
+						</OverflowToolbar>
+					</footer>
+				</Page>
+			</pages>
+		</NavContainer>
+</mvc:View>
