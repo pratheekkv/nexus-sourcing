@@ -29,6 +29,7 @@ cds:
 ---
 spring:
   config.activate.on-profile: cloud
+  sql.init.mode: never
 cds:
   query.hierarchy.enabled: true
 logging:
