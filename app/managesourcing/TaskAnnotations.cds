@@ -6,6 +6,12 @@ annotate service.Task with @(UI: {
 
   LineItem: [
 
+
+        {
+            $Type: 'UI.DataField',
+            Value: NODE_ID,
+            Label : 'Description' 
+        },
         {
             $Type: 'UI.DataField',
             Value: description,
@@ -33,7 +39,7 @@ annotate service.Task with @(UI: {
 }, 
 Hierarchy.RecursiveHierarchy #PhaseHierarchy: {
   $Type                 : 'Hierarchy.RecursiveHierarchyType',
-  ExternalKey           : ID,
+  ExternalKey           : NODE_ID,
   LimitedDescendantCount: LimitedDescendantCount,
   DistanceFromRoot      : DistanceFromRoot,
   DrillState            : DrillState,
@@ -41,7 +47,7 @@ Hierarchy.RecursiveHierarchy #PhaseHierarchy: {
   MatchedDescendantCount: MatchedDescendantCount
 },
 Aggregation.RecursiveHierarchy #PhaseHierarchy: {
-    NodeProperty            : ID,
+    NodeProperty            : NODE_ID,
     ParentNavigationProperty: Parent
 },
 Capabilities.FilterRestrictions : {

@@ -464,7 +464,7 @@
       ],
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.$Type": "Hierarchy.RecursiveHierarchyType",
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.ExternalKey": {
-        "=": "ID"
+        "=": "NODE_ID"
       },
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.LimitedDescendantCount": {
         "=": "LimitedDescendantCount"
@@ -482,7 +482,7 @@
         "=": "MatchedDescendantCount"
       },
       "@Aggregation.RecursiveHierarchy#PhaseHierarchy.NodeProperty": {
-        "=": "ID"
+        "=": "NODE_ID"
       },
       "@Aggregation.RecursiveHierarchy#PhaseHierarchy.ParentNavigationProperty": {
         "=": "Parent"
@@ -593,7 +593,7 @@
           "@Common.Label": "{i18n>ChangedBy}",
           "@Core.Description": "{i18n>UserID.Description}"
         },
-        "ID": {
+        "NODE_ID": {
           "type": "cds.String"
         },
         "sourcingProject": {
@@ -641,7 +641,7 @@
         "approverReviewer": {
           "type": "cds.String"
         },
-        "ParentID": {
+        "PARENT_ID": {
           "type": "cds.String"
         },
         "LimitedDescendantCount": {
@@ -674,13 +674,13 @@
             {
               "ref": [
                 "Parent",
-                "ID"
+                "NODE_ID"
               ]
             },
             "=",
             {
               "ref": [
-                "ParentID"
+                "PARENT_ID"
               ]
             }
           ]
@@ -2284,7 +2284,7 @@
           "@Common.Label": "{i18n>ChangedBy}",
           "@Core.Description": "{i18n>UserID.Description}"
         },
-        "ID": {
+        "NODE_ID": {
           "type": "cds.String"
         },
         "sourcingProject": {
@@ -2332,7 +2332,7 @@
         "approverReviewer": {
           "type": "cds.String"
         },
-        "ParentID": {
+        "PARENT_ID": {
           "type": "cds.String"
         },
         "LimitedDescendantCount": {
@@ -2365,13 +2365,13 @@
             {
               "ref": [
                 "Parent",
-                "ID"
+                "NODE_ID"
               ]
             },
             "=",
             {
               "ref": [
-                "ParentID"
+                "PARENT_ID"
               ]
             }
           ]

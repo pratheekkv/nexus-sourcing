@@ -97,7 +97,7 @@
         <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
         <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
         <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
-        <Property Name="ID" Type="Edm.String"/>
+        <Property Name="NODE_ID" Type="Edm.String"/>
         <NavigationProperty Name="sourcingProject" Type="Sourcing.Project" Partner="tasks">
           <ReferentialConstraint Property="sourcingProject_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
@@ -108,7 +108,7 @@
         <Property Name="owner" Type="Edm.String"/>
         <Property Name="dueDate" Type="Edm.Date"/>
         <Property Name="approverReviewer" Type="Edm.String"/>
-        <Property Name="ParentID" Type="Edm.String"/>
+        <Property Name="PARENT_ID" Type="Edm.String"/>
         <Property Name="LimitedDescendantCount" Type="Edm.Int64"/>
         <Property Name="DistanceFromRoot" Type="Edm.Int64"/>
         <Property Name="DrillState" Type="Edm.String"/>
@@ -415,7 +415,7 @@
         </Annotation>
         <Annotation Term="Hierarchy.RecursiveHierarchy" Qualifier="PhaseHierarchy">
           <Record Type="Hierarchy.RecursiveHierarchyType">
-            <PropertyValue Property="ExternalKey" Path="ID"/>
+            <PropertyValue Property="ExternalKey" Path="NODE_ID"/>
             <PropertyValue Property="LimitedDescendantCount" Path="LimitedDescendantCount"/>
             <PropertyValue Property="DistanceFromRoot" Path="DistanceFromRoot"/>
             <PropertyValue Property="DrillState" Path="DrillState"/>
@@ -425,7 +425,7 @@
         </Annotation>
         <Annotation Term="Aggregation.RecursiveHierarchy" Qualifier="PhaseHierarchy">
           <Record Type="Aggregation.RecursiveHierarchyType">
-            <PropertyValue Property="NodeProperty" PropertyPath="ID"/>
+            <PropertyValue Property="NodeProperty" PropertyPath="NODE_ID"/>
             <PropertyValue Property="ParentNavigationProperty" NavigationPropertyPath="Parent"/>
           </Record>
         </Annotation>
