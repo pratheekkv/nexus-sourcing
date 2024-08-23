@@ -395,6 +395,10 @@
         <Annotation Term="UI.LineItem">
           <Collection>
             <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="NODE_ID"/>
+              <PropertyValue Property="Label" String="Description"/>
+            </Record>
+            <Record Type="UI.DataField">
               <PropertyValue Property="Value" Path="description"/>
               <PropertyValue Property="Label" String="Description"/>
             </Record>

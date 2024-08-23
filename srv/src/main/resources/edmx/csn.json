@@ -430,6 +430,13 @@
         {
           "$Type": "UI.DataField",
           "Value": {
+            "=": "NODE_ID"
+          },
+          "Label": "Description"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
             "=": "description"
           },
           "Label": "Description"
