@@ -5,8 +5,8 @@ using { managed, cuid } from '@sap/cds/common';
 using { com.sap.sourcing.db.SourcingProject as SourcingProject } from './SourcingProject';
 using { com.sap.sourcing.db.Event as Event } from './Event';
 
-entity Task : managed {
-  ID : String;
+entity Task :cuid, managed {
+  node_id : String;
   sourcingProject: Association to one SourcingProject;
   description: String;
   type: String enum { phase = 'Phase'; task = 'Task'; };
@@ -14,7 +14,7 @@ entity Task : managed {
   owner: String;
   dueDate: Date;
   approverReviewer: String;
-  ParentID  : type of ID;
+  parent_id  : type of node_id;
 
   @Core.Computed: true
   LimitedDescendantCount : Integer64;
@@ -32,6 +32,6 @@ entity Task : managed {
   MatchedDescendantCount : Integer64;
 
   
-  Parent : Association to one Task on Parent.ID = ParentID;
+  parent : Association to one Task on parent.node_id = parent_id;
   events: Association to one Event;
 }

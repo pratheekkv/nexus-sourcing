@@ -1,5 +1,6 @@
 package com.sap.nexus.sourcing;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import com.sap.cds.Result;
 import com.sap.cds.Row;
 import com.sap.cds.ql.CQL;
 import com.sap.cds.ql.Select;
@@ -37,9 +39,9 @@ import cds.gen.sourcing.Sourcing_;
 import cds.gen.sourcing.Task;
 import cds.gen.sourcing.Task_;
 
-@Component
-@RequestScope
-@ServiceName(Sourcing_.CDS_NAME)
+// @Component
+// @RequestScope
+// @ServiceName(Sourcing_.CDS_NAME)
 public class TaskHandler implements EventHandler  {
 
     private static final Class<Task_> TASK = Task_.class;
@@ -67,6 +69,130 @@ public class TaskHandler implements EventHandler  {
         }
     }
 
+    private void setResult(CdsReadEventContext event, List<Task> result) {
+        addDrillState(result);
+
+        event.setResult(result);
+    }
+
+    private List<Task> handleAncestors(CdsReadEventContext event, CqnAncestorsTransformation ancestors,
+            CqnTopLevelsTransformation topLevels) {
+        CqnTransformation trafo = ancestors.transformations().get(0);
+        Select<Task_> inner = Select.from(TASK).where(so -> so.node_id().eq(CQL.get("$outer.node_id")));
+        if (trafo instanceof CqnFilterTransformation filter) {
+            inner.where(filter.filter());
+        } else if (trafo instanceof CqnSearchTransformation search) {
+            inner.search(search.search());
+        }
+        Select<Task_> outer = Select.from(TASK).columns(so -> so.node_id().as("i0"), so -> so.parent().node_id().as("i1"),
+                so -> so.parent().parent().node_id().as("i2"),
+                so -> so.parent().parent().parent().node_id().as("i3"), so -> so.parent().parent().parent().parent().node_id().as("i4")).where(so -> so.exists($outer -> inner));
+
+                Set<String> ancestorIds = new HashSet<>();
+        db.run(outer).stream().forEach(r -> {
+            addIfNotNull(ancestorIds, r, "i0");
+            addIfNotNull(ancestorIds, r, "i1");
+            addIfNotNull(ancestorIds, r, "i2");
+            addIfNotNull(ancestorIds, r, "i3");
+            addIfNotNull(ancestorIds, r, "i4");
+        });        
+
+        CqnPredicate filter = CQL.get("node_id").in(ancestorIds.stream().toList());
+        return topLevels(topLevels, filter);
+    }
+
+    private void addIfNotNull(Set<String> ancestorIds, Row r, String key) {
+        String id = (String) r.get(key);
+        if (id != null) {
+            ancestorIds.add(id);
+        }
+    }
+
+    private List<Task> topLevels(CqnTopLevelsTransformation topLevels, CqnPredicate filter) {
+        long limit = topLevels.levels();
+        if (limit < 0) {
+            return topLevelsAll(topLevels, filter);
+        } else {
+            return topLevelsLimit(limit, filter);
+        }
+    }
+
+
+
+    private List<Task> topLevelsAll(CqnTopLevelsTransformation topLevels, CqnPredicate filter) {
+        Map<String, Task> lookup = new HashMap<>();
+
+        CqnSelect getAll = Select.from(TASK).where(filter);
+        var all = db.run(getAll).listOf(Task.class);
+        all.forEach(so -> lookup.put(so.getNodeId(), so));
+        all.forEach(so -> so.setParent(lookup.get(so.getParentId())));
+        all.forEach(so -> so.setDistanceFromRoot(dfr(so)));
+
+        return all.stream().sorted(new Sorter()).toList();
+    }
+
+    private static long dfr(Task so) {
+        long dfr = 0;
+        while (so.getParent() != null) {
+            dfr++;
+            so = so.getParent();
+        }
+
+        return dfr;
+    }
+
+    private List<Task> topLevelsLimit(long limit, CqnPredicate filter) {
+        Map<String, Task> lookup = new HashMap<>();
+
+        CqnSelect getRoot = Select.from(TASK).where(so -> so.parent_id().isNull().and(filter));
+         Result res = db.run(getRoot);
+         if(res.rowCount() == 0 ){
+            return new ArrayList<>();
+         }
+         Task root = res.single(Task.class);
+        root.setDistanceFromRoot(0l);
+        lookup.put(root.getNodeId(), root);
+        List<String> parents = List.of(root.getNodeId());
+        for (long i = 1; i < limit; i++) {
+            List<String> ps = parents;
+            CqnSelect getChildren = Select.from(TASK).where(so -> so.parent_id().in(ps).and(filter));
+            List<Task> children = db.run(getChildren).listOf(Task.class);
+            if (children.isEmpty()) {
+                break;
+            }
+            long dfr = i;
+            parents = children.stream().peek(so -> {
+                so.setParent(lookup.get(so.getParentId()));
+                so.setDistanceFromRoot(dfr);
+                lookup.put(so.getNodeId(), so);
+            }).map(Task::getNodeId).toList();
+        }
+
+        return lookup.values().stream().sorted(new Sorter()).toList();
+    }
+
+    private void addDrillState(List<Task> sos) {
+        List<String> ids = sos.stream().map(so -> so.getNodeId()).toList();
+        Set<String> parents = sos.stream().map(so -> so.getParentId()).filter(p -> p != null).collect(Collectors.toSet());
+        CqnSelect q = Select.from(TASK, so -> so.parent()).columns(so -> so.node_id())
+                .where(so -> so.node_id().in(ids));
+        Set<String> nonLeafs = db
+                .run(q)
+                .stream().map(r -> (String) r.get(Task.NODE_ID)).collect(Collectors.toSet());
+
+        for (Task so : sos) {
+            String id = so.getNodeId();
+            if (nonLeafs.contains(id)) {
+                if (parents.contains(id)) {
+                    so.setDrillState("expanded");
+                } else {
+                    so.setDrillState("collapsed");
+                }
+            } else {
+                so.setDrillState("leaf");
+            }
+        }
+    }
 
     private List<Task> handleDescendants(CdsReadEventContext event,
             CqnDescendantsTransformation descendants) {
@@ -81,146 +207,25 @@ public class TaskHandler implements EventHandler  {
 
         CqnSelect getChildren = Select.from(TASK).where(parentFilter);
         List<Task> children = db.run(getChildren).listOf(Task.class);
-        children.forEach(task -> task.setDrillState("collapsed"));
+        children.forEach(so -> so.setDrillState("collapsed"));
 
         return children;
     }
 
-
-    private void setResult(CdsReadEventContext event, List<Task> result) {
-        addDrillState(result);
-
-        event.setResult(result);
-    }
-
-    private void addDrillState(List<Task> tasks) {
-        List<String> ids = tasks.stream().map(task -> task.getId()).toList();
-        Set<String> parents = tasks.stream().map(task -> task.getParentID()).filter(p -> p != null).collect(Collectors.toSet());
-        CqnSelect q = Select.from(TASK, task -> task.Parent()).columns(task -> task.ID())
-                .where(task -> task.ID().in(ids));
-        Set<String> nonLeafs = db
-                .run(q)
-                .stream().map(r -> (String) r.get(Task.ID)).collect(Collectors.toSet());
-
-        for (Task task : tasks) {
-            String id = task.getId();
-            if (nonLeafs.contains(id)) {
-                if (parents.contains(id)) {
-                    task.setDrillState("expanded");
-                } else {
-                    task.setDrillState("collapsed");
-                }
-            } else {
-                task.setDrillState("leaf");
-            }
-        }
-    }
-
-    private List<Task> topLevels(CqnTopLevelsTransformation topLevels, CqnPredicate filter) {
-        long limit = topLevels.levels();
-        if (limit < 0) {
-            return topLevelsAll(topLevels, filter);
-        } else {
-            return topLevelsLimit(limit, filter);
-        }
-    }
-
-
-    private List<Task> topLevelsAll(CqnTopLevelsTransformation topLevels, CqnPredicate filter) {
-        Map<String, Task> lookup = new HashMap<>();
-
-        CqnSelect getAll = Select.from(TASK).where(filter);
-        var all = db.run(getAll).listOf(Task.class);
-        all.forEach(task -> lookup.put(task.getId(), task));
-        all.forEach(task -> task.setParent(lookup.get(task.getParentID())));
-        all.forEach(task -> task.setDistanceFromRoot(dfr(task)));
-
-        return all.stream().sorted(new Sorter()).toList();
-    }
-
-    private static long dfr(Task task) {
-        long dfr = 0;
-        while (task.getParent() != null) {
-            dfr++;
-            task = task.getParent();
-        }
-
-        return dfr;
-    }
-
-    private List<Task> topLevelsLimit(long limit, CqnPredicate filter) {
-        Map<String, Task> lookup = new HashMap<>();
-
-        CqnSelect getRoot = Select.from(TASK).where(task -> task.ParentID().isNull().and(filter));
-        Task root = db.run(getRoot).single(Task.class);
-        root.setDistanceFromRoot(0l);
-        lookup.put(root.getId(), root);
-        List<String> parents = List.of(root.getId());
-        for (long i = 1; i < limit; i++) {
-            List<String> ps = parents;
-            CqnSelect getChildren = Select.from(TASK).where(task -> task.ParentID().in(ps).and(filter));
-            List<Task> children = db.run(getChildren).listOf(Task.class);
-            if (children.isEmpty()) {
-                break;
-            }
-            long dfr = i;
-            parents = children.stream().peek(so -> {
-                so.setParent(lookup.get(so.getParentID()));
-                so.setDistanceFromRoot(dfr);
-                lookup.put(so.getId(), so);
-            }).map(Task::getId).toList();
-        }
-
-        return lookup.values().stream().sorted(new Sorter()).toList();
-    }  
-
-    private List<Task> handleAncestors(CdsReadEventContext event, CqnAncestorsTransformation ancestors,
-            CqnTopLevelsTransformation topLevels) {
-        CqnTransformation trafo = ancestors.transformations().get(0);
-        Select<Task_> inner = Select.from(TASK).where(task -> task.ID().eq(CQL.get("$outer.ID")));
-        if (trafo instanceof CqnFilterTransformation filter) {
-            inner.where(filter.filter());
-        } else if (trafo instanceof CqnSearchTransformation search) {
-            inner.search(search.search());
-        }
-        Select<Task_> outer = Select.from(TASK).columns(task -> task.ID().as("i0"), task -> task.Parent().ID().as("i1"),
-                so -> so.Parent().Parent().ID().as("i2"),
-                so -> so.Parent().Parent().Parent().ID().as("i3"), task -> task.Parent().Parent().Parent().Parent().ID().as("i4")).where(task -> task.exists($outer -> inner));
-
-                Set<String> ancestorIds = new HashSet<>();
-        db.run(outer).stream().forEach(r -> {
-            addIfNotNull(ancestorIds, r, "i0");
-            addIfNotNull(ancestorIds, r, "i1");
-            addIfNotNull(ancestorIds, r, "i2");
-            addIfNotNull(ancestorIds, r, "i3");
-            addIfNotNull(ancestorIds, r, "i4");
-        }); 
-
-        CqnPredicate filter = CQL.get("node_id").in(ancestorIds.stream().toList());
-        return topLevels(topLevels, filter);
-    }
-
-    private void addIfNotNull(Set<String> ancestorIds, Row r, String key) {
-        String id = (String) r.get(key);
-        if (id != null) {
-            ancestorIds.add(id);
-        }
-    }
-    
     private class Sorter implements Comparator<Task> {
 
         @Override
-        public int compare(Task task1, Task task2) {
-            return toPath(task1).compareTo(toPath(task2));
+        public int compare(Task o1, Task o2) {
+            return toPath(o1).compareTo(toPath(o2));
         }
 
-        String toPath(Task task) {
+        String toPath(Task so) {
             String path;
 
-            path = task.getId();
-            while (task.getParent() != null) {
-                task = task.getParent();
-                path = task.getId() + "." + path;
+            path = so.getNodeId();
+            while (so.getParent() != null) {
+                so = so.getParent();
+                path = so.getNodeId() + "." + path;
             }
 
             return path;

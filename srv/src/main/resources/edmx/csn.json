@@ -430,6 +430,13 @@
         {
           "$Type": "UI.DataField",
           "Value": {
+            "=": "node_id"
+          },
+          "Label": "ID"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
             "=": "description"
           },
           "Label": "Description"
@@ -464,7 +471,7 @@
       ],
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.$Type": "Hierarchy.RecursiveHierarchyType",
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.ExternalKey": {
-        "=": "ID"
+        "=": "node_id"
       },
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.LimitedDescendantCount": {
         "=": "LimitedDescendantCount"
@@ -482,10 +489,10 @@
         "=": "MatchedDescendantCount"
       },
       "@Aggregation.RecursiveHierarchy#PhaseHierarchy.NodeProperty": {
-        "=": "ID"
+        "=": "node_id"
       },
       "@Aggregation.RecursiveHierarchy#PhaseHierarchy.ParentNavigationProperty": {
-        "=": "Parent"
+        "=": "parent"
       },
       "@Capabilities.FilterRestrictions.NonFilterableProperties": [
         {
@@ -529,6 +536,10 @@
         }
       },
       "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
         "createdAt": {
           "@cds.on.insert": {
             "=": "$now"
@@ -593,7 +604,7 @@
           "@Common.Label": "{i18n>ChangedBy}",
           "@Core.Description": "{i18n>UserID.Description}"
         },
-        "ID": {
+        "node_id": {
           "type": "cds.String"
         },
         "sourcingProject": {
@@ -641,7 +652,7 @@
         "approverReviewer": {
           "type": "cds.String"
         },
-        "ParentID": {
+        "parent_id": {
           "type": "cds.String"
         },
         "LimitedDescendantCount": {
@@ -664,7 +675,7 @@
           "@Core.Computed": true,
           "type": "cds.Integer64"
         },
-        "Parent": {
+        "parent": {
           "type": "cds.Association",
           "cardinality": {
             "max": 1
@@ -673,14 +684,14 @@
           "on": [
             {
               "ref": [
-                "Parent",
-                "ID"
+                "parent",
+                "node_id"
               ]
             },
             "=",
             {
               "ref": [
-                "ParentID"
+                "parent_id"
               ]
             }
           ]
@@ -758,6 +769,19 @@
             "max": 1
           },
           "on": [
+            {
+              "ref": [
+                "SiblingEntity",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
             {
               "ref": [
                 "SiblingEntity",
@@ -889,7 +913,18 @@
         "tasks": {
           "type": "cds.Association",
           "target": "Sourcing.Task",
-          "keys": []
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "$generatedFieldName": "tasks_ID"
+            }
+          ]
+        },
+        "tasks_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "tasks"
         },
         "description": {
           "type": "cds.String"
@@ -1926,7 +1961,18 @@
         "tasks": {
           "type": "cds.Association",
           "target": "com.sap.sourcing.db.Task",
-          "keys": []
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "$generatedFieldName": "tasks_ID"
+            }
+          ]
+        },
+        "tasks_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "tasks"
         },
         "description": {
           "type": "cds.String"
@@ -2217,9 +2263,14 @@
       "kind": "entity",
       "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "includes": [
+        "cuid",
         "managed"
       ],
       "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
         "createdAt": {
           "@cds.on.insert": {
             "=": "$now"
@@ -2284,7 +2335,7 @@
           "@Common.Label": "{i18n>ChangedBy}",
           "@Core.Description": "{i18n>UserID.Description}"
         },
-        "ID": {
+        "node_id": {
           "type": "cds.String"
         },
         "sourcingProject": {
@@ -2332,7 +2383,7 @@
         "approverReviewer": {
           "type": "cds.String"
         },
-        "ParentID": {
+        "parent_id": {
           "type": "cds.String"
         },
         "LimitedDescendantCount": {
@@ -2355,7 +2406,7 @@
           "@Core.Computed": true,
           "type": "cds.Integer64"
         },
-        "Parent": {
+        "parent": {
           "type": "cds.Association",
           "cardinality": {
             "max": 1
@@ -2364,14 +2415,14 @@
           "on": [
             {
               "ref": [
-                "Parent",
-                "ID"
+                "parent",
+                "node_id"
               ]
             },
             "=",
             {
               "ref": [
-                "ParentID"
+                "parent_id"
               ]
             }
           ]

@@ -108,11 +108,12 @@ sap.ui.define(
 
             var oListBindings = this.getView().byId('taskList').getModel().bindList(this.getView().byId('taskList').getBindingContext().getPath()+'/tasks');
             this.getView().getModel("ui").setProperty("/isBusy", true);
+            var data = {
+                type : "Task" 
+            };
             await this.editFlow.createDocument(oListBindings, {
                 creationMode: "Inline",
-                data: {
-                    type : "Task" 
-                }
+                data: data
             });
             this.getView().byId('taskList').refresh();
             this.getView().getModel("ui").setProperty("/isBusy", false);
@@ -127,17 +128,18 @@ sap.ui.define(
             if(oSelectedContext){
                 taskType = await oSelectedContext?.requestProperty("type");
                 if(taskType === "phase"){ 
-                    phaseId = await oSelectedContext?.requestProperty("ID");
+                    phaseId = await oSelectedContext?.requestProperty("node_id");
                 }
             }
             
+            var data = {
+                type : "Phase",
+                parent_id : phaseId 
+            };
 
             await this.editFlow.createDocument(oListBindings, {
                 creationMode: "Inline",
-                data: {
-                    type : "Phase",
-                    ParentID : phaseId 
-                }
+                data: data
             });
             this.getView().byId('taskList').refresh();
             this.getView().getModel("ui").setProperty("/isBusy", false);

@@ -31,3 +31,7 @@ spring:
   config.activate.on-profile: cloud
 cds:
   query.hierarchy.enabled: true
+logging:
+  level:
+    com.sap.cds.persistence.sql: DEBUG
+    com.sap.cds.util.transformations: DEBUG  
