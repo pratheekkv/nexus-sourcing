@@ -1,5 +1,4 @@
 
-DROP VIEW IF EXISTS Sourcing_DraftAdministrativeData;
 DROP VIEW IF EXISTS Sourcing_ItemTerms;
 DROP VIEW IF EXISTS Sourcing_Terms;
 DROP VIEW IF EXISTS Sourcing_Supplier;
@@ -7,12 +6,6 @@ DROP VIEW IF EXISTS Sourcing_Item;
 DROP VIEW IF EXISTS Sourcing_Event;
 DROP VIEW IF EXISTS Sourcing_Task;
 DROP VIEW IF EXISTS Sourcing_Project;
-DROP TABLE IF EXISTS Sourcing_Supplier_drafts;
-DROP TABLE IF EXISTS Sourcing_Item_drafts;
-DROP TABLE IF EXISTS Sourcing_Event_drafts;
-DROP TABLE IF EXISTS Sourcing_Task_drafts;
-DROP TABLE IF EXISTS Sourcing_Project_drafts;
-DROP TABLE IF EXISTS DRAFT_DraftAdministrativeData;
 DROP TABLE IF EXISTS com_sap_sourcing_db_Task;
 DROP TABLE IF EXISTS com_sap_sourcing_db_Terms;
 DROP TABLE IF EXISTS com_sap_sourcing_db_Supplier;
@@ -75,6 +68,7 @@ CREATE TABLE com_sap_sourcing_db_Event (
   modifiedAt TIMESTAMP(7),
   modifiedBy NVARCHAR(255),
   sourcingProject_ID NVARCHAR(36),
+  tasks_ID NVARCHAR(36),
   description NVARCHAR(255),
   type NVARCHAR(255),
   version NVARCHAR(255),
@@ -125,6 +119,7 @@ CREATE TABLE com_sap_sourcing_db_Terms (
 ); 
 
 CREATE TABLE com_sap_sourcing_db_Task (
+  ID NVARCHAR(36) NOT NULL,
   createdAt TIMESTAMP(7),
   createdBy NVARCHAR(255),
   modifiedAt TIMESTAMP(7),
@@ -143,119 +138,7 @@ CREATE TABLE com_sap_sourcing_db_Task (
   DrillState NVARCHAR(255),
   Matched BOOLEAN,
   MatchedDescendantCount BIGINT,
-  events_ID NVARCHAR(36)
-); 
-
-CREATE TABLE DRAFT_DraftAdministrativeData (
-  DraftUUID NVARCHAR(36) NOT NULL,
-  CreationDateTime TIMESTAMP(7),
-  CreatedByUser NVARCHAR(256),
-  DraftIsCreatedByMe BOOLEAN,
-  LastChangeDateTime TIMESTAMP(7),
-  LastChangedByUser NVARCHAR(256),
-  InProcessByUser NVARCHAR(256),
-  DraftIsProcessedByMe BOOLEAN,
-  PRIMARY KEY(DraftUUID)
-); 
-
-CREATE TABLE Sourcing_Project_drafts (
-  ID NVARCHAR(36) NOT NULL,
-  createdAt TIMESTAMP(7) NULL,
-  createdBy NVARCHAR(255) NULL,
-  modifiedAt TIMESTAMP(7) NULL,
-  modifiedBy NVARCHAR(255) NULL,
-  title NVARCHAR(255) NULL,
-  description NVARCHAR(255) NULL,
-  isQuickProject BOOLEAN NULL,
-  state INTEGER NULL,
-  isTest INTEGER NULL,
-  startDate DATE NULL,
-  dueDate DATE NULL,
-  targetSaving NVARCHAR(3) NULL,
-  region NVARCHAR(4) NULL,
-  externalSystem NVARCHAR(255) NULL,
-  IsActiveEntity BOOLEAN,
-  HasActiveEntity BOOLEAN,
-  HasDraftEntity BOOLEAN,
-  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
-  PRIMARY KEY(ID)
-); 
-
-CREATE TABLE Sourcing_Task_drafts (
-  createdAt TIMESTAMP(7) NULL,
-  createdBy NVARCHAR(255) NULL,
-  modifiedAt TIMESTAMP(7) NULL,
-  modifiedBy NVARCHAR(255) NULL,
-  NODE_ID NVARCHAR(255) NULL,
-  sourcingProject_ID NVARCHAR(36) NULL,
-  description NVARCHAR(255) NULL,
-  type NVARCHAR(255) NULL,
-  status NVARCHAR(255) NULL,
-  owner NVARCHAR(255) NULL,
-  dueDate DATE NULL,
-  approverReviewer NVARCHAR(255) NULL,
-  PARENT_ID NVARCHAR(255) NULL,
-  LimitedDescendantCount BIGINT NULL,
-  DistanceFromRoot BIGINT NULL,
-  DrillState NVARCHAR(255) NULL,
-  Matched BOOLEAN NULL,
-  MatchedDescendantCount BIGINT NULL,
-  events_ID NVARCHAR(36) NULL,
-  IsActiveEntity BOOLEAN,
-  HasActiveEntity BOOLEAN,
-  HasDraftEntity BOOLEAN,
-  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL
-); 
-
-CREATE TABLE Sourcing_Event_drafts (
-  ID NVARCHAR(36) NOT NULL,
-  createdAt TIMESTAMP(7) NULL,
-  createdBy NVARCHAR(255) NULL,
-  modifiedAt TIMESTAMP(7) NULL,
-  modifiedBy NVARCHAR(255) NULL,
-  sourcingProject_ID NVARCHAR(36) NULL,
-  description NVARCHAR(255) NULL,
-  type NVARCHAR(255) NULL,
-  version NVARCHAR(255) NULL,
-  status NVARCHAR(255) NULL,
-  owner NVARCHAR(255) NULL,
-  eventBiddingEnds INTEGER NULL,
-  eventDurationUOM NVARCHAR(255) NULL,
-  awardDate DATE NULL,
-  IsActiveEntity BOOLEAN,
-  HasActiveEntity BOOLEAN,
-  HasDraftEntity BOOLEAN,
-  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
-  PRIMARY KEY(ID)
-); 
-
-CREATE TABLE Sourcing_Item_drafts (
-  ID NVARCHAR(36) NOT NULL,
-  event_ID NVARCHAR(36) NULL,
-  description NVARCHAR(255) NULL,
-  IsActiveEntity BOOLEAN,
-  HasActiveEntity BOOLEAN,
-  HasDraftEntity BOOLEAN,
-  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
-  PRIMARY KEY(ID)
-); 
-
-CREATE TABLE Sourcing_Supplier_drafts (
-  ID NVARCHAR(36) NOT NULL,
-  createdAt TIMESTAMP(7) NULL,
-  createdBy NVARCHAR(255) NULL,
-  modifiedAt TIMESTAMP(7) NULL,
-  modifiedBy NVARCHAR(255) NULL,
-  event_ID NVARCHAR(36) NULL,
-  orgName NVARCHAR(255) NULL,
-  contact NVARCHAR(255) NULL,
-  riskLevel NVARCHAR(255) NULL,
-  incumbentSupplier BOOLEAN NULL,
-  excludedSupplier BOOLEAN NULL,
-  IsActiveEntity BOOLEAN,
-  HasActiveEntity BOOLEAN,
-  HasDraftEntity BOOLEAN,
-  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
+  events_ID NVARCHAR(36),
   PRIMARY KEY(ID)
 ); 
 
@@ -278,6 +161,7 @@ CREATE VIEW Sourcing_Project AS SELECT
 FROM com_sap_sourcing_db_SourcingProject AS SourcingProject_0; 
 
 CREATE VIEW Sourcing_Task AS SELECT
+  Task_0.ID,
   Task_0.createdAt,
   Task_0.createdBy,
   Task_0.modifiedAt,
@@ -306,6 +190,7 @@ CREATE VIEW Sourcing_Event AS SELECT
   Event_0.modifiedAt,
   Event_0.modifiedBy,
   Event_0.sourcingProject_ID,
+  Event_0.tasks_ID,
   Event_0.description,
   Event_0.type,
   Event_0.version,
@@ -349,15 +234,4 @@ CREATE VIEW Sourcing_ItemTerms AS SELECT
   ItemTerms_0.datatype,
   ItemTerms_0."VALUE"
 FROM com_sap_sourcing_db_ItemTerms AS ItemTerms_0; 
-
-CREATE VIEW Sourcing_DraftAdministrativeData AS SELECT
-  DraftAdministrativeData.DraftUUID,
-  DraftAdministrativeData.CreationDateTime,
-  DraftAdministrativeData.CreatedByUser,
-  DraftAdministrativeData.DraftIsCreatedByMe,
-  DraftAdministrativeData.LastChangeDateTime,
-  DraftAdministrativeData.LastChangedByUser,
-  DraftAdministrativeData.InProcessByUser,
-  DraftAdministrativeData.DraftIsProcessedByMe
-FROM DRAFT_DraftAdministrativeData AS DraftAdministrativeData; 
 

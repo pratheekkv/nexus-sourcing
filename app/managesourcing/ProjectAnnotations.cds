@@ -1,7 +1,7 @@
 using Sourcing as service from '../../srv/SourcingService';
 
 
-annotate service.Project with @odata.draft.enabled;
+// annotate service.Project with @odata.draft.enabled;
 
 annotate service.Project with @(UI: {
  FieldGroup #GeneralInformation: {

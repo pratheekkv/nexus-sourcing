@@ -8,7 +8,6 @@
     "Sourcing.Project": {
       "kind": "entity",
       "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
-      "@odata.draft.enabled": true,
       "@UI.FieldGroup#GeneralInformation.Data": [
         {
           "$Type": "UI.DataField",
@@ -202,7 +201,7 @@
           "type": "cds.String"
         },
         "tasks": {
-          "type": "cds.Composition",
+          "type": "cds.Association",
           "cardinality": {
             "max": "*"
           },
@@ -305,122 +304,8 @@
               ]
             }
           ]
-        },
-        "IsActiveEntity": {
-          "type": "cds.Boolean",
-          "key": true,
-          "default": {
-            "val": true
-          },
-          "@UI.Hidden": true
-        },
-        "HasActiveEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "HasDraftEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData": {
-          "type": "cds.Association",
-          "target": "Sourcing.DraftAdministrativeData",
-          "keys": [
-            {
-              "ref": [
-                "DraftUUID"
-              ],
-              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
-            }
-          ],
-          "cardinality": {
-            "max": 1
-          },
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData_DraftUUID": {
-          "type": "cds.UUID",
-          "@odata.foreignKey4": "DraftAdministrativeData",
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "SiblingEntity": {
-          "type": "cds.Association",
-          "target": "Sourcing.Project",
-          "cardinality": {
-            "max": 1
-          },
-          "on": [
-            {
-              "ref": [
-                "SiblingEntity",
-                "ID"
-              ]
-            },
-            "=",
-            {
-              "ref": [
-                "ID"
-              ]
-            },
-            "and",
-            {
-              "ref": [
-                "SiblingEntity",
-                "IsActiveEntity"
-              ]
-            },
-            "!=",
-            {
-              "ref": [
-                "IsActiveEntity"
-              ]
-            }
-          ]
         }
-      },
-      "actions": {
-        "draftPrepare": {
-          "kind": "action",
-          "returns": {
-            "type": "Sourcing.Project"
-          },
-          "params": {
-            "SideEffectsQualifier": {
-              "type": "cds.String"
-            }
-          }
-        },
-        "draftActivate": {
-          "kind": "action",
-          "returns": {
-            "type": "Sourcing.Project"
-          }
-        },
-        "draftEdit": {
-          "kind": "action",
-          "returns": {
-            "type": "Sourcing.Project"
-          },
-          "params": {
-            "PreserveChanges": {
-              "type": "cds.Boolean"
-            }
-          }
-        }
-      },
-      "@Common.DraftRoot.ActivationAction": "draftActivate",
-      "@Common.DraftRoot.EditAction": "draftEdit",
-      "@Common.DraftRoot.PreparationAction": "draftPrepare"
+      }
     },
     "Sourcing.Task": {
       "kind": "entity",
@@ -536,6 +421,10 @@
         }
       },
       "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
         "createdAt": {
           "@cds.on.insert": {
             "=": "$now"
@@ -710,90 +599,8 @@
         "events_ID": {
           "type": "cds.UUID",
           "@odata.foreignKey4": "events"
-        },
-        "IsActiveEntity": {
-          "type": "cds.Boolean",
-          "key": true,
-          "default": {
-            "val": true
-          },
-          "@UI.Hidden": true
-        },
-        "HasActiveEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "HasDraftEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData": {
-          "type": "cds.Association",
-          "target": "Sourcing.DraftAdministrativeData",
-          "keys": [
-            {
-              "ref": [
-                "DraftUUID"
-              ],
-              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
-            }
-          ],
-          "cardinality": {
-            "max": 1
-          },
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData_DraftUUID": {
-          "type": "cds.UUID",
-          "@odata.foreignKey4": "DraftAdministrativeData",
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "SiblingEntity": {
-          "type": "cds.Association",
-          "target": "Sourcing.Task",
-          "cardinality": {
-            "max": 1
-          },
-          "on": [
-            {
-              "ref": [
-                "SiblingEntity",
-                "IsActiveEntity"
-              ]
-            },
-            "!=",
-            {
-              "ref": [
-                "IsActiveEntity"
-              ]
-            }
-          ]
         }
-      },
-      "actions": {
-        "draftPrepare": {
-          "kind": "action",
-          "returns": {
-            "type": "Sourcing.Task"
-          },
-          "params": {
-            "SideEffectsQualifier": {
-              "type": "cds.String"
-            }
-          }
-        }
-      },
-      "@Common.DraftNode.PreparationAction": "draftPrepare"
+      }
     },
     "Sourcing.Event": {
       "kind": "entity",
@@ -896,7 +703,18 @@
         "tasks": {
           "type": "cds.Association",
           "target": "Sourcing.Task",
-          "keys": []
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "$generatedFieldName": "tasks_ID"
+            }
+          ]
+        },
+        "tasks_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "tasks"
         },
         "description": {
           "type": "cds.String"
@@ -963,103 +781,8 @@
               ]
             }
           ]
-        },
-        "IsActiveEntity": {
-          "type": "cds.Boolean",
-          "key": true,
-          "default": {
-            "val": true
-          },
-          "@UI.Hidden": true
-        },
-        "HasActiveEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "HasDraftEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData": {
-          "type": "cds.Association",
-          "target": "Sourcing.DraftAdministrativeData",
-          "keys": [
-            {
-              "ref": [
-                "DraftUUID"
-              ],
-              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
-            }
-          ],
-          "cardinality": {
-            "max": 1
-          },
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData_DraftUUID": {
-          "type": "cds.UUID",
-          "@odata.foreignKey4": "DraftAdministrativeData",
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "SiblingEntity": {
-          "type": "cds.Association",
-          "target": "Sourcing.Event",
-          "cardinality": {
-            "max": 1
-          },
-          "on": [
-            {
-              "ref": [
-                "SiblingEntity",
-                "ID"
-              ]
-            },
-            "=",
-            {
-              "ref": [
-                "ID"
-              ]
-            },
-            "and",
-            {
-              "ref": [
-                "SiblingEntity",
-                "IsActiveEntity"
-              ]
-            },
-            "!=",
-            {
-              "ref": [
-                "IsActiveEntity"
-              ]
-            }
-          ]
         }
-      },
-      "actions": {
-        "draftPrepare": {
-          "kind": "action",
-          "returns": {
-            "type": "Sourcing.Event"
-          },
-          "params": {
-            "SideEffectsQualifier": {
-              "type": "cds.String"
-            }
-          }
-        }
-      },
-      "@Common.DraftNode.PreparationAction": "draftPrepare"
+      }
     },
     "Sourcing.Item": {
       "kind": "entity",
@@ -1097,103 +820,8 @@
         },
         "description": {
           "type": "cds.String"
-        },
-        "IsActiveEntity": {
-          "type": "cds.Boolean",
-          "key": true,
-          "default": {
-            "val": true
-          },
-          "@UI.Hidden": true
-        },
-        "HasActiveEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "HasDraftEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData": {
-          "type": "cds.Association",
-          "target": "Sourcing.DraftAdministrativeData",
-          "keys": [
-            {
-              "ref": [
-                "DraftUUID"
-              ],
-              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
-            }
-          ],
-          "cardinality": {
-            "max": 1
-          },
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData_DraftUUID": {
-          "type": "cds.UUID",
-          "@odata.foreignKey4": "DraftAdministrativeData",
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "SiblingEntity": {
-          "type": "cds.Association",
-          "target": "Sourcing.Item",
-          "cardinality": {
-            "max": 1
-          },
-          "on": [
-            {
-              "ref": [
-                "SiblingEntity",
-                "ID"
-              ]
-            },
-            "=",
-            {
-              "ref": [
-                "ID"
-              ]
-            },
-            "and",
-            {
-              "ref": [
-                "SiblingEntity",
-                "IsActiveEntity"
-              ]
-            },
-            "!=",
-            {
-              "ref": [
-                "IsActiveEntity"
-              ]
-            }
-          ]
         }
-      },
-      "actions": {
-        "draftPrepare": {
-          "kind": "action",
-          "returns": {
-            "type": "Sourcing.Item"
-          },
-          "params": {
-            "SideEffectsQualifier": {
-              "type": "cds.String"
-            }
-          }
-        }
-      },
-      "@Common.DraftNode.PreparationAction": "draftPrepare"
+      }
     },
     "Sourcing.Supplier": {
       "kind": "entity",
@@ -1307,103 +935,8 @@
         },
         "excludedSupplier": {
           "type": "cds.Boolean"
-        },
-        "IsActiveEntity": {
-          "type": "cds.Boolean",
-          "key": true,
-          "default": {
-            "val": true
-          },
-          "@UI.Hidden": true
-        },
-        "HasActiveEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "HasDraftEntity": {
-          "type": "cds.Boolean",
-          "default": {
-            "val": false
-          },
-          "notNull": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData": {
-          "type": "cds.Association",
-          "target": "Sourcing.DraftAdministrativeData",
-          "keys": [
-            {
-              "ref": [
-                "DraftUUID"
-              ],
-              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
-            }
-          ],
-          "cardinality": {
-            "max": 1
-          },
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "DraftAdministrativeData_DraftUUID": {
-          "type": "cds.UUID",
-          "@odata.foreignKey4": "DraftAdministrativeData",
-          "@odata.contained": true,
-          "@UI.Hidden": true
-        },
-        "SiblingEntity": {
-          "type": "cds.Association",
-          "target": "Sourcing.Supplier",
-          "cardinality": {
-            "max": 1
-          },
-          "on": [
-            {
-              "ref": [
-                "SiblingEntity",
-                "ID"
-              ]
-            },
-            "=",
-            {
-              "ref": [
-                "ID"
-              ]
-            },
-            "and",
-            {
-              "ref": [
-                "SiblingEntity",
-                "IsActiveEntity"
-              ]
-            },
-            "!=",
-            {
-              "ref": [
-                "IsActiveEntity"
-              ]
-            }
-          ]
         }
-      },
-      "actions": {
-        "draftPrepare": {
-          "kind": "action",
-          "returns": {
-            "type": "Sourcing.Supplier"
-          },
-          "params": {
-            "SideEffectsQualifier": {
-              "type": "cds.String"
-            }
-          }
-        }
-      },
-      "@Common.DraftNode.PreparationAction": "draftPrepare"
+      }
     },
     "Sourcing.Terms": {
       "kind": "entity",
@@ -1598,7 +1131,7 @@
           "type": "cds.String"
         },
         "tasks": {
-          "type": "cds.Composition",
+          "type": "cds.Association",
           "cardinality": {
             "max": "*"
           },
@@ -1933,7 +1466,18 @@
         "tasks": {
           "type": "cds.Association",
           "target": "com.sap.sourcing.db.Task",
-          "keys": []
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "$generatedFieldName": "tasks_ID"
+            }
+          ]
+        },
+        "tasks_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "tasks"
         },
         "description": {
           "type": "cds.String"
@@ -2224,9 +1768,14 @@
       "kind": "entity",
       "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "includes": [
+        "cuid",
         "managed"
       ],
       "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
         "createdAt": {
           "@cds.on.insert": {
             "=": "$now"
@@ -3189,103 +2738,6 @@
           "@Common.Label": "{i18n>TimeZoneCode}"
         }
       }
-    },
-    "DRAFT.DraftAdministrativeData": {
-      "kind": "entity",
-      "elements": {
-        "DraftUUID": {
-          "type": "cds.UUID",
-          "key": true,
-          "@UI.Hidden": true,
-          "@Common.Label": "{i18n>Draft_DraftUUID}"
-        },
-        "CreationDateTime": {
-          "type": "cds.Timestamp",
-          "@Common.Label": "{i18n>Draft_CreationDateTime}"
-        },
-        "CreatedByUser": {
-          "type": "cds.String",
-          "length": 256,
-          "@Common.Label": "{i18n>Draft_CreatedByUser}"
-        },
-        "DraftIsCreatedByMe": {
-          "type": "cds.Boolean",
-          "@UI.Hidden": true,
-          "@Common.Label": "{i18n>Draft_DraftIsCreatedByMe}"
-        },
-        "LastChangeDateTime": {
-          "type": "cds.Timestamp",
-          "@Common.Label": "{i18n>Draft_LastChangeDateTime}"
-        },
-        "LastChangedByUser": {
-          "type": "cds.String",
-          "length": 256,
-          "@Common.Label": "{i18n>Draft_LastChangedByUser}"
-        },
-        "InProcessByUser": {
-          "type": "cds.String",
-          "length": 256,
-          "@Common.Label": "{i18n>Draft_InProcessByUser}"
-        },
-        "DraftIsProcessedByMe": {
-          "type": "cds.Boolean",
-          "@UI.Hidden": true,
-          "@Common.Label": "{i18n>Draft_DraftIsProcessedByMe}"
-        }
-      },
-      "@Common.Label": "{i18n>Draft_DraftAdministrativeData}"
-    },
-    "Sourcing.DraftAdministrativeData": {
-      "kind": "entity",
-      "projection": {
-        "from": {
-          "ref": [
-            "DRAFT.DraftAdministrativeData"
-          ]
-        }
-      },
-      "elements": {
-        "DraftUUID": {
-          "type": "cds.UUID",
-          "key": true,
-          "@UI.Hidden": true,
-          "@Common.Label": "{i18n>Draft_DraftUUID}"
-        },
-        "CreationDateTime": {
-          "type": "cds.Timestamp",
-          "@Common.Label": "{i18n>Draft_CreationDateTime}"
-        },
-        "CreatedByUser": {
-          "type": "cds.String",
-          "length": 256,
-          "@Common.Label": "{i18n>Draft_CreatedByUser}"
-        },
-        "DraftIsCreatedByMe": {
-          "type": "cds.Boolean",
-          "@UI.Hidden": true,
-          "@Common.Label": "{i18n>Draft_DraftIsCreatedByMe}"
-        },
-        "LastChangeDateTime": {
-          "type": "cds.Timestamp",
-          "@Common.Label": "{i18n>Draft_LastChangeDateTime}"
-        },
-        "LastChangedByUser": {
-          "type": "cds.String",
-          "length": 256,
-          "@Common.Label": "{i18n>Draft_LastChangedByUser}"
-        },
-        "InProcessByUser": {
-          "type": "cds.String",
-          "length": 256,
-          "@Common.Label": "{i18n>Draft_InProcessByUser}"
-        },
-        "DraftIsProcessedByMe": {
-          "type": "cds.Boolean",
-          "@UI.Hidden": true,
-          "@Common.Label": "{i18n>Draft_DraftIsProcessedByMe}"
-        }
-      },
-      "@Common.Label": "{i18n>Draft_DraftAdministrativeData}"
     }
   },
   "meta": {

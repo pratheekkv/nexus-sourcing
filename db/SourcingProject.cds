@@ -16,7 +16,7 @@ entity SourcingProject : cuid, managed {
   targetSaving: String(3);
   region : String(4);
   externalSystem: String;
-  tasks: Composition of many Task on tasks.sourcingProject = $self;
+  tasks: Association to  many Task on tasks.sourcingProject = $self;
   events: Composition of many Event on events.sourcingProject = $self;
   stateList: association to one States on stateList.ID = $self.state;
   regionList: association to one Region on regionList.regionCode = $self.region;
