@@ -1,14 +1,14 @@
 {
-  "index.html": 1724219919997,
-  "ext/main/Main.controller.js": 1724324446135,
-  "manifest.json": 1724341388000,
+  "Component.js.map": 1724346844155,
+  "manifest.json": 1724346844001,
+  "ext/main/Main.controller.js": 1724342057177,
   "Component.js": 1724219919997,
-  "ext/main/Main-dbg.controller.js": 1724324446135,
-  "ext/main/Main.controller.js.map": 1724341388151,
+  "ext/main/Main-dbg.controller.js": 1724342057177,
+  "ext/main/Main.controller.js.map": 1724346844176,
   "Component-dbg.js": 1724219919997,
-  "Component.js.map": 1724341388131,
-  "Component-preload.js": 1724341388280,
-  "Component-preload.js.map": 1724341388280,
+  "i18n/i18n.properties": 1724219919998,
+  "Component-preload.js": 1724346844321,
+  "Component-preload.js.map": 1724346844321,
   "ext/main/Main.view.xml": 1724324760320,
-  "i18n/i18n.properties": 1724219919998
+  "index.html": 1724219919997
 }

@@ -5,7 +5,8 @@ using { managed, cuid } from '@sap/cds/common';
 using { com.sap.sourcing.db.SourcingProject as SourcingProject } from './SourcingProject';
 using { com.sap.sourcing.db.Event as Event } from './Event';
 
-entity Task : cuid, managed {
+entity Task : managed {
+  ID : String;
   sourcingProject: Association to one SourcingProject;
   description: String;
   type: String enum { phase = 'Phase'; task = 'Task'; };

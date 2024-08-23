@@ -33,7 +33,7 @@ annotate service.Task with @(UI: {
 }, 
 Hierarchy.RecursiveHierarchy #PhaseHierarchy: {
   $Type                 : 'Hierarchy.RecursiveHierarchyType',
-  ExternalKey           : null,
+  ExternalKey           : ID,
   LimitedDescendantCount: LimitedDescendantCount,
   DistanceFromRoot      : DistanceFromRoot,
   DrillState            : DrillState,

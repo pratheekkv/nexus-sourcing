@@ -91,15 +91,13 @@
       </EntityType>
       <EntityType Name="Task">
         <Key>
-          <PropertyRef Name="ID"/>
           <PropertyRef Name="IsActiveEntity"/>
         </Key>
-        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
         <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
         <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
         <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
         <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
-        <Property Name="externalId" Type="Edm.String"/>
+        <Property Name="ID" Type="Edm.String"/>
         <NavigationProperty Name="sourcingProject" Type="Sourcing.Project" Partner="tasks">
           <ReferentialConstraint Property="sourcingProject_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
@@ -141,10 +139,7 @@
           <ReferentialConstraint Property="sourcingProject_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
         <Property Name="sourcingProject_ID" Type="Edm.Guid"/>
-        <NavigationProperty Name="tasks" Type="Sourcing.Task">
-          <ReferentialConstraint Property="tasks_ID" ReferencedProperty="ID"/>
-        </NavigationProperty>
-        <Property Name="tasks_ID" Type="Edm.Guid"/>
+        <NavigationProperty Name="tasks" Type="Sourcing.Task"/>
         <Property Name="description" Type="Edm.String"/>
         <Property Name="type" Type="Edm.String"/>
         <Property Name="version" Type="Edm.String"/>
@@ -400,10 +395,6 @@
         <Annotation Term="UI.LineItem">
           <Collection>
             <Record Type="UI.DataField">
-              <PropertyValue Property="Value" Path="externalId"/>
-              <PropertyValue Property="Label" String="Task/Phase"/>
-            </Record>
-            <Record Type="UI.DataField">
               <PropertyValue Property="Value" Path="description"/>
               <PropertyValue Property="Label" String="Description"/>
             </Record>
@@ -424,7 +415,7 @@
         </Annotation>
         <Annotation Term="Hierarchy.RecursiveHierarchy" Qualifier="PhaseHierarchy">
           <Record Type="Hierarchy.RecursiveHierarchyType">
-            <PropertyValue Property="ExternalKey" Path="externalId"/>
+            <PropertyValue Property="ExternalKey" Path="ID"/>
             <PropertyValue Property="LimitedDescendantCount" Path="LimitedDescendantCount"/>
             <PropertyValue Property="DistanceFromRoot" Path="DistanceFromRoot"/>
             <PropertyValue Property="DrillState" Path="DrillState"/>
@@ -434,7 +425,7 @@
         </Annotation>
         <Annotation Term="Aggregation.RecursiveHierarchy" Qualifier="PhaseHierarchy">
           <Record Type="Aggregation.RecursiveHierarchyType">
-            <PropertyValue Property="NodeProperty" PropertyPath="externalId"/>
+            <PropertyValue Property="NodeProperty" PropertyPath="ID"/>
             <PropertyValue Property="ParentNavigationProperty" NavigationPropertyPath="Parent"/>
           </Record>
         </Annotation>
@@ -474,9 +465,6 @@
           </Record>
         </Annotation>
       </Annotations>
-      <Annotations Target="Sourcing.Task/ID">
-        <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
-      </Annotations>
       <Annotations Target="Sourcing.Task/createdAt">
         <Annotation Term="UI.HiddenFilter" Bool="true"/>
         <Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
@@ -510,11 +498,11 @@
           <Collection>
             <Record Type="Validation.AllowedValue">
               <Annotation Term="Core.SymbolicName" String="phase"/>
-              <PropertyValue Property="Value" String="phase"/>
+              <PropertyValue Property="Value" String="Phase"/>
             </Record>
             <Record Type="Validation.AllowedValue">
               <Annotation Term="Core.SymbolicName" String="task"/>
-              <PropertyValue Property="Value" String="task"/>
+              <PropertyValue Property="Value" String="Task"/>
             </Record>
           </Collection>
         </Annotation>

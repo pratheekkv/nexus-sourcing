@@ -75,7 +75,6 @@ CREATE TABLE com_sap_sourcing_db_Event (
   modifiedAt TIMESTAMP(7),
   modifiedBy NVARCHAR(255),
   sourcingProject_ID NVARCHAR(36),
-  tasks_ID NVARCHAR(36),
   description NVARCHAR(255),
   type NVARCHAR(255),
   version NVARCHAR(255),
@@ -126,12 +125,11 @@ CREATE TABLE com_sap_sourcing_db_Terms (
 ); 
 
 CREATE TABLE com_sap_sourcing_db_Task (
-  ID NVARCHAR(36) NOT NULL,
   createdAt TIMESTAMP(7),
   createdBy NVARCHAR(255),
   modifiedAt TIMESTAMP(7),
   modifiedBy NVARCHAR(255),
-  externalId NVARCHAR(255),
+  ID NVARCHAR(255),
   sourcingProject_ID NVARCHAR(36),
   description NVARCHAR(255),
   type NVARCHAR(255),
@@ -145,8 +143,7 @@ CREATE TABLE com_sap_sourcing_db_Task (
   DrillState NVARCHAR(255),
   Matched BOOLEAN,
   MatchedDescendantCount BIGINT,
-  events_ID NVARCHAR(36),
-  PRIMARY KEY(ID)
+  events_ID NVARCHAR(36)
 ); 
 
 CREATE TABLE DRAFT_DraftAdministrativeData (
@@ -185,12 +182,11 @@ CREATE TABLE Sourcing_Project_drafts (
 ); 
 
 CREATE TABLE Sourcing_Task_drafts (
-  ID NVARCHAR(36) NOT NULL,
   createdAt TIMESTAMP(7) NULL,
   createdBy NVARCHAR(255) NULL,
   modifiedAt TIMESTAMP(7) NULL,
   modifiedBy NVARCHAR(255) NULL,
-  externalId NVARCHAR(255) NULL,
+  ID NVARCHAR(255) NULL,
   sourcingProject_ID NVARCHAR(36) NULL,
   description NVARCHAR(255) NULL,
   type NVARCHAR(255) NULL,
@@ -208,8 +204,7 @@ CREATE TABLE Sourcing_Task_drafts (
   IsActiveEntity BOOLEAN,
   HasActiveEntity BOOLEAN,
   HasDraftEntity BOOLEAN,
-  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
-  PRIMARY KEY(ID)
+  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL
 ); 
 
 CREATE TABLE Sourcing_Event_drafts (
@@ -219,7 +214,6 @@ CREATE TABLE Sourcing_Event_drafts (
   modifiedAt TIMESTAMP(7) NULL,
   modifiedBy NVARCHAR(255) NULL,
   sourcingProject_ID NVARCHAR(36) NULL,
-  tasks_ID NVARCHAR(36) NULL,
   description NVARCHAR(255) NULL,
   type NVARCHAR(255) NULL,
   version NVARCHAR(255) NULL,
@@ -284,12 +278,11 @@ CREATE VIEW Sourcing_Project AS SELECT
 FROM com_sap_sourcing_db_SourcingProject AS SourcingProject_0; 
 
 CREATE VIEW Sourcing_Task AS SELECT
-  Task_0.ID,
   Task_0.createdAt,
   Task_0.createdBy,
   Task_0.modifiedAt,
   Task_0.modifiedBy,
-  Task_0.externalId,
+  Task_0.ID,
   Task_0.sourcingProject_ID,
   Task_0.description,
   Task_0.type,
@@ -313,7 +306,6 @@ CREATE VIEW Sourcing_Event AS SELECT
   Event_0.modifiedAt,
   Event_0.modifiedBy,
   Event_0.sourcingProject_ID,
-  Event_0.tasks_ID,
   Event_0.description,
   Event_0.type,
   Event_0.version,

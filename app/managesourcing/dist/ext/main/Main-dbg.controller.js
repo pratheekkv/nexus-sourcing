@@ -111,7 +111,7 @@ sap.ui.define(
             await this.editFlow.createDocument(oListBindings, {
                 creationMode: "Inline",
                 data: {
-                    type : "task" 
+                    type : "Task" 
                 }
             });
             this.getView().byId('taskList').refresh();
@@ -135,7 +135,7 @@ sap.ui.define(
             await this.editFlow.createDocument(oListBindings, {
                 creationMode: "Inline",
                 data: {
-                    type : "phase",
+                    type : "Phase",
                     ParentID : phaseId 
                 }
             });
