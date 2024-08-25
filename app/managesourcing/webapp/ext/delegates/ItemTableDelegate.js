@@ -37,7 +37,7 @@ sap.ui.define([
          * Bind the columns to the table.
          */
        var _addColumn = function (oTable,sId, sPropertyKey) {
-            var oColumn = new sap.ui.mdc.table.Column({
+            return oColumn = new sap.ui.mdc.table.Column({
                 header: sPropertyKey,
                 propertyKey: 'terms',
                 template: new FieldBase({
@@ -45,7 +45,6 @@ sap.ui.define([
                 })
             });
 
-            oTable.addColumn(oColumn);
         };
 
         MyTableDelegate.addItem = async (oTable, sPropertyKey) => {
