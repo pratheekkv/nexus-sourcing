@@ -1,5 +1,6 @@
 
 DROP VIEW IF EXISTS Sourcing_DraftAdministrativeData;
+DROP VIEW IF EXISTS Sourcing_MessageBoard;
 DROP VIEW IF EXISTS Sourcing_ItemTerms;
 DROP VIEW IF EXISTS Sourcing_Terms;
 DROP VIEW IF EXISTS Sourcing_Supplier;
@@ -357,6 +358,18 @@ CREATE VIEW Sourcing_ItemTerms AS SELECT
   ItemTerms_0.datatype,
   ItemTerms_0."VALUE"
 FROM com_sap_sourcing_db_ItemTerms AS ItemTerms_0; 
+
+CREATE VIEW Sourcing_MessageBoard AS SELECT
+  MessageBoard_0.ID,
+  MessageBoard_0.createdAt,
+  MessageBoard_0.createdBy,
+  MessageBoard_0.modifiedAt,
+  MessageBoard_0.modifiedBy,
+  MessageBoard_0.title,
+  MessageBoard_0.labels,
+  MessageBoard_0.replies,
+  MessageBoard_0.project_ID
+FROM com_sap_sourcing_db_MessageBoard AS MessageBoard_0; 
 
 CREATE VIEW Sourcing_DraftAdministrativeData AS SELECT
   DraftAdministrativeData.DraftUUID,

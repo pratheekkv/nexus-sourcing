@@ -105,6 +105,11 @@
           "name": "Details",
           "pattern": "Project({key})",
           "target": "Details"
+        },
+        {
+          "name": "Event",
+					"pattern": "Project({key})/events({key2}):?query:",
+          "target": "EventDetails"
         }
       ],
       "targets": {
@@ -121,7 +126,7 @@
         },
         "Details": {
           "type": "Component",
-          "id": "ProjectMain",
+          "id": "Details",
           "name": "sap.fe.core.fpm",
           "options": {
             "settings": {
@@ -129,7 +134,18 @@
               "contextPath": "/Project"
             }
           }
-        }
+        },
+        "EventDetails": {
+          "type": "Component",
+          "id": "ProjectMain",
+          "name": "sap.fe.core.fpm",
+          "options": {
+            "settings": {
+              "viewName": "managesourcing.ext.event.SourcingEvent",
+              "contextPath": "/Project/events"
+            }
+          }
+        }        
       }
     }
   },

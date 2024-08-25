@@ -13,6 +13,13 @@ sap.ui.define(
              */
              onInit: function () {
                 PageController.prototype.onInit.apply(this);
+                managesourcing.control.IconTab.IconTabHeader.prototype.validateTab = $.proxy(function(nextTabKey){
+                   var isEditable =  this.getView().getModel("ui").getProperty("/isEditable");
+                   if(isEditable){
+                    return false;
+                   }
+                    return true;
+                },this);
                 this.getAppComponent().getRouter("ProjectMain").attachRoutePatternMatched(this._onRouteMatched, this);
              },
 
@@ -108,9 +115,22 @@ sap.ui.define(
 
             var oListBindings = this.getView().byId('taskList').getModel().bindList(this.getView().byId('taskList').getBindingContext().getPath()+'/tasks');
             this.getView().getModel("ui").setProperty("/isBusy", true);
+
+            var oSelectedContext = this.getView().byId('taskList').getSelectedContexts()[0];
+            var taskType = null, parent_id = null;
+            if(oSelectedContext){
+                taskType = await oSelectedContext?.requestProperty("type");
+                if(taskType === "Phase"){ 
+                    parent_id = await oSelectedContext?.requestProperty("node_id");
+                }
+            }
+            
             var data = {
-                type : "Task" 
+                node_id: " ",
+                type : "Task",
+                parent_id : parent_id 
             };
+
             await this.editFlow.createDocument(oListBindings, {
                 creationMode: "Inline",
                 data: data
@@ -127,12 +147,13 @@ sap.ui.define(
             var taskType = null, phaseId = null;
             if(oSelectedContext){
                 taskType = await oSelectedContext?.requestProperty("type");
-                if(taskType === "phase"){ 
+                if(taskType === "Phase"){ 
                     phaseId = await oSelectedContext?.requestProperty("node_id");
                 }
             }
             
             var data = {
+                node_id: " ",
                 type : "Phase",
                 parent_id : phaseId 
             };
@@ -143,6 +164,14 @@ sap.ui.define(
             });
             this.getView().byId('taskList').refresh();
             this.getView().getModel("ui").setProperty("/isBusy", false);
+         },
+
+         onTabSelect: function(oEvent){
+
+         },
+
+         onEventNav : function(oEvent){
+            this.getExtensionAPI().routing.navigate(oEvent.getParameter('bindingContext'),{preserveHistory: false});
          }
         
         
