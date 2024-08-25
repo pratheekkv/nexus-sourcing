@@ -1,33 +1,34 @@
 sap.ui.define([
     "sap/ui/mdc/TableDelegate",
     "sap/ui/mdc/field/FieldBase"
-], function (TableDelegate, , FieldBase) {
+], function (TableDelegate,  FieldBase) {
     "use strict";
 
-        var MyTableDelegate = Object.assign({}, DelegateV4);
+        var MyTableDelegate = Object.assign({}, TableDelegate);
 
 
         MyTableDelegate.fetchProperties = async function (oTable) {
             var aProperties = [];
             var oContext = oTable.getBindingContext();
             try{
-            var aTerms = await oContext?.requestObject("terms");
+              var aTerms =  await oTable.getModel().bindList(oContext.getPath() + '/terms').requestContexts();
+
+              for (const term of aTerms) { 
+                var id = await term.requestProperty("id");
+                var description = await term.requestProperty("description");
+                var datatype = await term.requestProperty("datatype");
+                
+                aProperties.push({
+                    key: id,
+                    label: description,
+                    path: "{path:'terms', formatter: '.formItermTerms'}",
+                    dataType: "sap.ui.model.type." + datatype
+                })
+              }
+
             } catch(err){
                 
             }
-
-
-            // // Assuming the JSON model has a 'columns' array with definitions
-            // if (oData && oData.columns) {
-            //     oData.columns.forEach(function (oColumnDef) {
-            //         aProperties.push({
-            //             name: oColumnDef.name,
-            //             path: oColumnDef.path,
-            //             label: oColumnDef.label,
-            //             type: oColumnDef.type // You can handle specific types as needed
-            //         });
-            //     });
-            // }
 
             return Promise.resolve(aProperties);
         };
@@ -35,22 +36,29 @@ sap.ui.define([
         /**
          * Bind the columns to the table.
          */
-        MyTableDelegate.addColumn = function (oTable, oColumnInfo) {
+       var _addColumn = function (oTable,sId, sPropertyKey) {
             var oColumn = new sap.ui.mdc.table.Column({
-                header: oColumnInfo.label,
-                dataProperty: oColumnInfo.path,
+                header: sPropertyKey,
+                propertyKey: 'terms',
                 template: new FieldBase({
-                    value: "{" + oColumnInfo.path + "}"
+                    value: "{ parts: [ {path: 'id'}, {path: 'terms'}, {value: '" + sPropertyKey + "'} ], formatter: '.formatProperties'}",
                 })
             });
 
             oTable.addColumn(oColumn);
         };
 
+        MyTableDelegate.addItem = async (oTable, sPropertyKey) => {
+            // const oPropertyInfo = JSONPropertyInfo.find((oPI) => oPI.key === sPropertyKey);
+            const sId = oTable.getId() + "---col-" + sPropertyKey;
+            return await _addColumn(oTable,sId, sPropertyKey);
+        };
+
         MyTableDelegate.updateBindingInfo = function (oTable, oBindingInfo) {
  
             TableDelegate.updateBindingInfo.call(MyTableDelegate, oTable, oBindingInfo);
-            oBindingInfo.path = oTable.getPayload().bindingPath;
+            oBindingInfo.path = oTable.getBindingContext().getPath() + oTable.getPayload().bindingPath;
+            oBindingInfo.parameters.expand = 'terms';
         };
 
         return MyTableDelegate;

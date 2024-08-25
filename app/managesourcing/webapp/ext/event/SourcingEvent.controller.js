@@ -14,7 +14,11 @@ sap.ui.define(
 
              _onRouteMatched: function (oEvent) {
                 var oModel = this.getView().getModel();
-            },  
+            }, 
+            
+            formItermTerms : function(oData){
+                debugger;
+            },
             
             onModelContextChange: async function(oEvent){
                 var oContext = this.getView()?.getBindingContext();
