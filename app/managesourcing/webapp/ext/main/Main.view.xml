@@ -15,7 +15,7 @@
 			<customITB:items>
 					<IconTabFilter id="Summary" key="Summary" icon="sap-icon://manager-insight" text="Project Summary" >
 						<HBox width="100%" justifyContent="End">
-							<Button text="Edit" press="onEdit" />
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
 						</HBox>	
 						<macros:Form metaPath="@UI.FieldGroup#GeneralInformation" id="overview">
 							<macros:layout type="ResponsiveGridLayout" columnsM="1" singleContainerFullSize="true" labelSpanL="1" labelSpanM="1" labelSpanS="1" emptySpanL="7" />
@@ -28,7 +28,7 @@
 
 					<IconTabFilter id="Tasks" key="Tasks" icon="sap-icon://pie-chart" text="Tasks">
 						<HBox width="100%" justifyContent="End">
-							<Button text="Edit" press="onEdit" />
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
 						</HBox>											
                         <macros:TreeTable metaPath="tasks/@com.sap.vocabularies.UI.v1.LineItem" id="taskList" headerVisible="false" 
 							selectionMode="Single" busy="{ui>/isBusy}" hierarchyQualifier="PhaseHierarchy" rowPress="onTaskRowPress">
@@ -46,7 +46,7 @@
 
 					<IconTabFilter id="Events" key="Events" icon="sap-icon://batch-payments" text="Events and Documents">
 						<HBox width="100%" justifyContent="End">
-							<Button text="Edit" press="onEdit" />
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
 						</HBox>	
                         <macros:Table metaPath="events/@com.sap.vocabularies.UI.v1.LineItem" id="EventsTable" selectionMode="Single" rowPress="onEventNav" />
                     </IconTabFilter>
@@ -55,7 +55,7 @@
 
 					<IconTabFilter id="MessageBoard" key="MessageBoard" icon="sap-icon://message-popup" text="Message Board">
 					<HBox width="100%" justifyContent="End">
-							<Button text="Edit" press="onEdit" />
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
 					</HBox>	
                         <macros:Table metaPath="messages/@com.sap.vocabularies.UI.v1.LineItem" readOnly="true" id="MessageBoardTable" />
                     </IconTabFilter>

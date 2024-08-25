@@ -7,6 +7,7 @@
     },
     "Sourcing.Project": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "@odata.draft.enabled": true,
       "@UI.FieldGroup#GeneralInformation.Data": [
         {
@@ -118,6 +119,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -149,6 +151,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -421,6 +424,7 @@
     },
     "Sourcing.Task": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "@UI.CreateHidden": true,
       "@UI.LineItem": [
         {
@@ -548,6 +552,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -579,6 +584,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -806,6 +812,7 @@
     },
     "Sourcing.Event": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "@UI.LineItem": [
         {
           "$Type": "UI.DataField",
@@ -875,6 +882,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -906,6 +914,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1024,6 +1033,27 @@
             }
           ]
         },
+        "terms": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Sourcing.Terms",
+          "on": [
+            {
+              "ref": [
+                "terms",
+                "Event"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
         "IsActiveEntity": {
           "type": "cds.Boolean",
           "key": true,
@@ -1123,6 +1153,7 @@
     },
     "Sourcing.Item": {
       "kind": "entity",
+      "doc": "Aspect for entities with canonical universal IDs\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-cuid",
       "projection": {
         "from": {
           "ref": [
@@ -1156,6 +1187,27 @@
         },
         "description": {
           "type": "cds.String"
+        },
+        "terms": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Sourcing.ItemTerms",
+          "on": [
+            {
+              "ref": [
+                "terms",
+                "Item"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
         },
         "IsActiveEntity": {
           "type": "cds.Boolean",
@@ -1256,6 +1308,7 @@
     },
     "Sourcing.Supplier": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "projection": {
         "from": {
           "ref": [
@@ -1282,6 +1335,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1313,6 +1367,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1499,8 +1554,103 @@
         },
         "datatype": {
           "type": "cds.String"
+        },
+        "IsActiveEntity": {
+          "type": "cds.Boolean",
+          "key": true,
+          "default": {
+            "val": true
+          },
+          "@UI.Hidden": true
+        },
+        "HasActiveEntity": {
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          },
+          "notNull": true,
+          "@UI.Hidden": true
+        },
+        "HasDraftEntity": {
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          },
+          "notNull": true,
+          "@UI.Hidden": true
+        },
+        "DraftAdministrativeData": {
+          "type": "cds.Association",
+          "target": "Sourcing.DraftAdministrativeData",
+          "keys": [
+            {
+              "ref": [
+                "DraftUUID"
+              ],
+              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
+            }
+          ],
+          "cardinality": {
+            "max": 1
+          },
+          "@odata.contained": true,
+          "@UI.Hidden": true
+        },
+        "DraftAdministrativeData_DraftUUID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "DraftAdministrativeData",
+          "@odata.contained": true,
+          "@UI.Hidden": true
+        },
+        "SiblingEntity": {
+          "type": "cds.Association",
+          "target": "Sourcing.Terms",
+          "cardinality": {
+            "max": 1
+          },
+          "on": [
+            {
+              "ref": [
+                "SiblingEntity",
+                "id"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "id"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "SiblingEntity",
+                "IsActiveEntity"
+              ]
+            },
+            "!=",
+            {
+              "ref": [
+                "IsActiveEntity"
+              ]
+            }
+          ]
         }
-      }
+      },
+      "actions": {
+        "draftPrepare": {
+          "kind": "action",
+          "returns": {
+            "type": "Sourcing.Terms"
+          },
+          "params": {
+            "SideEffectsQualifier": {
+              "type": "cds.String"
+            }
+          }
+        }
+      },
+      "@Common.DraftNode.PreparationAction": "draftPrepare"
     },
     "Sourcing.ItemTerms": {
       "kind": "entity",
@@ -1542,11 +1692,120 @@
         },
         "value": {
           "type": "cds.String"
+        },
+        "IsActiveEntity": {
+          "type": "cds.Boolean",
+          "key": true,
+          "default": {
+            "val": true
+          },
+          "@UI.Hidden": true
+        },
+        "HasActiveEntity": {
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          },
+          "notNull": true,
+          "@UI.Hidden": true
+        },
+        "HasDraftEntity": {
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          },
+          "notNull": true,
+          "@UI.Hidden": true
+        },
+        "DraftAdministrativeData": {
+          "type": "cds.Association",
+          "target": "Sourcing.DraftAdministrativeData",
+          "keys": [
+            {
+              "ref": [
+                "DraftUUID"
+              ],
+              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
+            }
+          ],
+          "cardinality": {
+            "max": 1
+          },
+          "@odata.contained": true,
+          "@UI.Hidden": true
+        },
+        "DraftAdministrativeData_DraftUUID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "DraftAdministrativeData",
+          "@odata.contained": true,
+          "@UI.Hidden": true
+        },
+        "SiblingEntity": {
+          "type": "cds.Association",
+          "target": "Sourcing.ItemTerms",
+          "cardinality": {
+            "max": 1
+          },
+          "on": [
+            {
+              "ref": [
+                "SiblingEntity",
+                "id"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "id"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "SiblingEntity",
+                "Item_ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "Item_ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "SiblingEntity",
+                "IsActiveEntity"
+              ]
+            },
+            "!=",
+            {
+              "ref": [
+                "IsActiveEntity"
+              ]
+            }
+          ]
         }
-      }
+      },
+      "actions": {
+        "draftPrepare": {
+          "kind": "action",
+          "returns": {
+            "type": "Sourcing.ItemTerms"
+          },
+          "params": {
+            "SideEffectsQualifier": {
+              "type": "cds.String"
+            }
+          }
+        }
+      },
+      "@Common.DraftNode.PreparationAction": "draftPrepare"
     },
     "Sourcing.MessageBoard": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "@UI.CreateHidden": true,
       "@UI.LineItem": [
         {
@@ -1597,6 +1856,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1628,6 +1888,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1677,6 +1938,7 @@
     },
     "com.sap.sourcing.db.SourcingProject": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "includes": [
         "cuid",
         "managed"
@@ -1700,6 +1962,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1731,6 +1994,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1914,6 +2178,7 @@
     },
     "com.sap.sourcing.db.MessageBoard": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "includes": [
         "cuid",
         "managed"
@@ -1937,6 +2202,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -1968,6 +2234,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -2017,6 +2284,7 @@
     },
     "com.sap.sourcing.db.Event": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "includes": [
         "cuid",
         "managed"
@@ -2040,6 +2308,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -2071,6 +2340,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -2188,11 +2458,33 @@
               ]
             }
           ]
+        },
+        "terms": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "com.sap.sourcing.db.Terms",
+          "on": [
+            {
+              "ref": [
+                "terms",
+                "Event"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
         }
       }
     },
     "com.sap.sourcing.db.Item": {
       "kind": "entity",
+      "doc": "Aspect for entities with canonical universal IDs\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-cuid",
       "includes": [
         "cuid"
       ],
@@ -2222,6 +2514,27 @@
         },
         "description": {
           "type": "cds.String"
+        },
+        "terms": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "com.sap.sourcing.db.ItemTerms",
+          "on": [
+            {
+              "ref": [
+                "terms",
+                "Item"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
         }
       }
     },
@@ -2263,6 +2576,7 @@
     },
     "com.sap.sourcing.db.Supplier": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "includes": [
         "cuid",
         "managed"
@@ -2286,6 +2600,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -2317,6 +2632,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -2406,6 +2722,7 @@
     },
     "com.sap.sourcing.db.Task": {
       "kind": "entity",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "includes": [
         "cuid",
         "managed"
@@ -2429,6 +2746,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -2460,6 +2778,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -2592,6 +2911,7 @@
     },
     "Language": {
       "kind": "type",
+      "doc": "Type for an association to Languages\n\nSee https://cap.cloud.sap/docs/cds/common#type-language",
       "@title": "{i18n>Language}",
       "@description": "{i18n>LanguageCode.Description}",
       "type": "cds.Association",
@@ -2608,6 +2928,7 @@
     },
     "Currency": {
       "kind": "type",
+      "doc": "Type for an association to Currencies\n\nSee https://cap.cloud.sap/docs/cds/common#type-currency",
       "@title": "{i18n>Currency}",
       "@description": "{i18n>CurrencyCode.Description}",
       "type": "cds.Association",
@@ -2624,6 +2945,7 @@
     },
     "Country": {
       "kind": "type",
+      "doc": "Type for an association to Countries\n\nSee https://cap.cloud.sap/docs/cds/common#type-country",
       "@title": "{i18n>Country}",
       "@description": "{i18n>CountryCode.Description}",
       "type": "cds.Association",
@@ -2640,6 +2962,7 @@
     },
     "Timezone": {
       "kind": "type",
+      "doc": "Type for an association to Timezones\n\nSee https://cap.cloud.sap/docs/cds/common#type-timezone",
       "type": "cds.Association",
       "target": "sap.common.Timezones",
       "keys": [
@@ -2651,10 +2974,12 @@
       ]
     },
     "sap.common": {
-      "kind": "context"
+      "kind": "context",
+      "doc": "Entities to serve the reuse types with extensible code lists\nincluding built-in support for value lists in Fiori."
     },
     "sap.common.Locale": {
       "kind": "type",
+      "doc": "Type for a language code",
       "@title": "{i18n>LanguageCode}",
       "type": "cds.String",
       "length": 14,
@@ -2662,6 +2987,7 @@
     },
     "sap.common.Languages": {
       "kind": "entity",
+      "doc": "Code list for languages\n\nSee https://cap.cloud.sap/docs/cds/common#entity-languages",
       "@cds.autoexpose": true,
       "@cds.persistence.skip": "if-unused",
       "@UI.Identification": [
@@ -2691,6 +3017,7 @@
           "@Common.Label": "{i18n>Description}"
         },
         "code": {
+          "doc": "Type for a language code",
           "@Common.Text": {
             "=": "name"
           },
@@ -2758,6 +3085,7 @@
     },
     "sap.common.Countries": {
       "kind": "entity",
+      "doc": "Code list for countries\n\nSee https://cap.cloud.sap/docs/cds/common#entity-countries",
       "@cds.autoexpose": true,
       "@cds.persistence.skip": "if-unused",
       "@UI.Identification": [
@@ -2854,6 +3182,7 @@
     },
     "sap.common.Currencies": {
       "kind": "entity",
+      "doc": "Code list for currencies\n\nSee https://cap.cloud.sap/docs/cds/common#entity-currencies",
       "@cds.autoexpose": true,
       "@cds.persistence.skip": "if-unused",
       "@UI.Identification": [
@@ -2961,6 +3290,7 @@
     },
     "sap.common.Timezones": {
       "kind": "entity",
+      "doc": "Code list for time zones\n\nSee https://cap.cloud.sap/docs/cds/common#entity-timezones",
       "@cds.autoexpose": true,
       "@cds.persistence.skip": "if-unused",
       "@UI.Identification": [
@@ -3054,6 +3384,7 @@
     },
     "sap.common.CodeList": {
       "kind": "aspect",
+      "doc": "Aspect for a code list with name and description\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-codelist",
       "@cds.autoexpose": true,
       "@cds.persistence.skip": "if-unused",
       "@UI.Identification": [
@@ -3085,6 +3416,7 @@
       "kind": "aspect",
       "elements": {
         "locale": {
+          "doc": "Type for a language code",
           "@title": "{i18n>LanguageCode}",
           "key": true,
           "type": "cds.String",
@@ -3095,6 +3427,7 @@
     },
     "cuid": {
       "kind": "aspect",
+      "doc": "Aspect for entities with canonical universal IDs\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-cuid",
       "elements": {
         "ID": {
           "key": true,
@@ -3104,6 +3437,7 @@
     },
     "managed": {
       "kind": "aspect",
+      "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "elements": {
         "createdAt": {
           "@cds.on.insert": {
@@ -3119,6 +3453,7 @@
           "@Common.Label": "{i18n>CreatedAt}"
         },
         "createdBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -3150,6 +3485,7 @@
           "@Common.Label": "{i18n>ChangedAt}"
         },
         "modifiedBy": {
+          "doc": "Canonical user ID",
           "@cds.on.insert": {
             "=": "$user"
           },
@@ -3171,6 +3507,7 @@
     },
     "temporal": {
       "kind": "aspect",
+      "doc": "Aspect for entities with temporal data\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-temporal",
       "elements": {
         "validFrom": {
           "@cds.valid.from": true,
@@ -3184,6 +3521,7 @@
     },
     "User": {
       "kind": "type",
+      "doc": "Canonical user ID",
       "@title": "{i18n>UserID}",
       "@description": "{i18n>UserID.Description}",
       "type": "cds.String",
@@ -3199,6 +3537,7 @@
       ],
       "elements": {
         "locale": {
+          "doc": "Type for a language code",
           "@title": "{i18n>LanguageCode}",
           "key": true,
           "type": "cds.String",
@@ -3220,6 +3559,7 @@
           "@Common.Label": "{i18n>Description}"
         },
         "code": {
+          "doc": "Type for a language code",
           "@odata.containment.ignore": true,
           "@Common.Text": {
             "=": "name"
@@ -3240,6 +3580,7 @@
       ],
       "elements": {
         "locale": {
+          "doc": "Type for a language code",
           "@title": "{i18n>LanguageCode}",
           "key": true,
           "type": "cds.String",
@@ -3281,6 +3622,7 @@
       ],
       "elements": {
         "locale": {
+          "doc": "Type for a language code",
           "@title": "{i18n>LanguageCode}",
           "key": true,
           "type": "cds.String",
@@ -3322,6 +3664,7 @@
       ],
       "elements": {
         "locale": {
+          "doc": "Type for a language code",
           "@title": "{i18n>LanguageCode}",
           "key": true,
           "type": "cds.String",

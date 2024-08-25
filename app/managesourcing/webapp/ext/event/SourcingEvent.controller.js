@@ -14,13 +14,16 @@ sap.ui.define(
 
              _onRouteMatched: function (oEvent) {
                 var oModel = this.getView().getModel();
-                debugger;
-                // var oMetaModelLoaded = oModel.getMetaModel().requestObject("/Project");
-                // oMetaModelLoaded.then(this._onMetadataLoaded.bind(this));
             },  
             
-            onModelContextChange: function(oEvent){
-                debugger;
+            onModelContextChange: async function(oEvent){
+                var oContext = this.getView()?.getBindingContext();
+                var isActiveEntity = await oContext?.requestProperty("IsActiveEntity");
+
+                if (isActiveEntity !== undefined) {
+                    var uiModel = this.getView()?.getModel("ui");
+                    uiModel.setProperty("/isEditable", !isActiveEntity);
+              }
             },
 
             onSubSectionEntered: function (oEvent) {
@@ -39,6 +42,12 @@ sap.ui.define(
                         });
                     }
                 }
+            },
+
+            onEdit : async function(oEvent) {
+                var oContext = this.getView().getBindingContext();
+            
+                await this.getExtensionAPI().getEditFlow().editDocument(oContext);
             }
 
         });

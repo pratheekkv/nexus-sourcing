@@ -41,10 +41,12 @@
           <NavigationPropertyBinding Path="tasks" Target="Task"/>
           <NavigationPropertyBinding Path="items" Target="Item"/>
           <NavigationPropertyBinding Path="suppliers" Target="Supplier"/>
+          <NavigationPropertyBinding Path="terms" Target="Terms"/>
           <NavigationPropertyBinding Path="SiblingEntity" Target="Event"/>
         </EntitySet>
         <EntitySet Name="Item" EntityType="Sourcing.Item">
           <NavigationPropertyBinding Path="event" Target="Event"/>
+          <NavigationPropertyBinding Path="terms" Target="ItemTerms"/>
           <NavigationPropertyBinding Path="SiblingEntity" Target="Item"/>
         </EntitySet>
         <EntitySet Name="Supplier" EntityType="Sourcing.Supplier">
@@ -53,9 +55,11 @@
         </EntitySet>
         <EntitySet Name="Terms" EntityType="Sourcing.Terms">
           <NavigationPropertyBinding Path="Event" Target="Event"/>
+          <NavigationPropertyBinding Path="SiblingEntity" Target="Terms"/>
         </EntitySet>
         <EntitySet Name="ItemTerms" EntityType="Sourcing.ItemTerms">
           <NavigationPropertyBinding Path="Item" Target="Item"/>
+          <NavigationPropertyBinding Path="SiblingEntity" Target="ItemTerms"/>
         </EntitySet>
         <EntitySet Name="MessageBoard" EntityType="Sourcing.MessageBoard">
           <NavigationPropertyBinding Path="project" Target="Project"/>
@@ -164,6 +168,9 @@
         <NavigationProperty Name="suppliers" Type="Collection(Sourcing.Supplier)" Partner="event">
           <OnDelete Action="Cascade"/>
         </NavigationProperty>
+        <NavigationProperty Name="terms" Type="Collection(Sourcing.Terms)" Partner="Event">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
         <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
         <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
         <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
@@ -181,6 +188,9 @@
         </NavigationProperty>
         <Property Name="event_ID" Type="Edm.Guid"/>
         <Property Name="description" Type="Edm.String"/>
+        <NavigationProperty Name="terms" Type="Collection(Sourcing.ItemTerms)" Partner="Item">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
         <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
         <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
         <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
@@ -215,27 +225,39 @@
       <EntityType Name="Terms">
         <Key>
           <PropertyRef Name="id"/>
+          <PropertyRef Name="IsActiveEntity"/>
         </Key>
-        <NavigationProperty Name="Event" Type="Sourcing.Event">
+        <NavigationProperty Name="Event" Type="Sourcing.Event" Partner="terms">
           <ReferentialConstraint Property="Event_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
         <Property Name="Event_ID" Type="Edm.Guid"/>
         <Property Name="id" Type="Edm.String" Nullable="false"/>
         <Property Name="description" Type="Edm.String"/>
         <Property Name="datatype" Type="Edm.String"/>
+        <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+        <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <NavigationProperty Name="DraftAdministrativeData" Type="Sourcing.DraftAdministrativeData" ContainsTarget="true"/>
+        <NavigationProperty Name="SiblingEntity" Type="Sourcing.Terms"/>
       </EntityType>
       <EntityType Name="ItemTerms">
         <Key>
           <PropertyRef Name="Item_ID"/>
           <PropertyRef Name="id"/>
+          <PropertyRef Name="IsActiveEntity"/>
         </Key>
-        <NavigationProperty Name="Item" Type="Sourcing.Item">
+        <NavigationProperty Name="Item" Type="Sourcing.Item" Partner="terms">
           <ReferentialConstraint Property="Item_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
         <Property Name="Item_ID" Type="Edm.Guid" Nullable="false"/>
         <Property Name="id" Type="Edm.String" Nullable="false"/>
         <Property Name="datatype" Type="Edm.String"/>
         <Property Name="value" Type="Edm.String"/>
+        <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+        <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+        <NavigationProperty Name="DraftAdministrativeData" Type="Sourcing.DraftAdministrativeData" ContainsTarget="true"/>
+        <NavigationProperty Name="SiblingEntity" Type="Sourcing.ItemTerms"/>
       </EntityType>
       <EntityType Name="MessageBoard">
         <Key>
@@ -291,6 +313,16 @@
         <Parameter Name="in" Type="Sourcing.Supplier"/>
         <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
         <ReturnType Type="Sourcing.Supplier"/>
+      </Action>
+      <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="Sourcing.Terms"/>
+        <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+        <ReturnType Type="Sourcing.Terms"/>
+      </Action>
+      <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+        <Parameter Name="in" Type="Sourcing.ItemTerms"/>
+        <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+        <ReturnType Type="Sourcing.ItemTerms"/>
       </Action>
       <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
         <Parameter Name="in" Type="Sourcing.Project"/>
@@ -363,6 +395,7 @@
             </PropertyValue>
           </Record>
         </Annotation>
+        <Annotation Term="Core.Description" String="Aspect to capture changes by user and name&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-managed"/>
       </Annotations>
       <Annotations Target="Sourcing.EntityContainer/Project">
         <Annotation Term="Common.DraftRoot">
@@ -458,6 +491,7 @@
             <PropertyValue Property="ParentNavigationProperty" NavigationPropertyPath="parent"/>
           </Record>
         </Annotation>
+        <Annotation Term="Core.Description" String="Aspect to capture changes by user and name&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-managed"/>
       </Annotations>
       <Annotations Target="Sourcing.EntityContainer/Task">
         <Annotation Term="UI.CreateHidden" Bool="true"/>
@@ -592,6 +626,7 @@
             </Record>
           </Collection>
         </Annotation>
+        <Annotation Term="Core.Description" String="Aspect to capture changes by user and name&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-managed"/>
       </Annotations>
       <Annotations Target="Sourcing.EntityContainer/Event">
         <Annotation Term="Common.DraftNode">
@@ -643,6 +678,9 @@
       <Annotations Target="Sourcing.Event/DraftAdministrativeData">
         <Annotation Term="UI.Hidden" Bool="true"/>
       </Annotations>
+      <Annotations Target="Sourcing.Item">
+        <Annotation Term="Core.Description" String="Aspect for entities with canonical universal IDs&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-cuid"/>
+      </Annotations>
       <Annotations Target="Sourcing.EntityContainer/Item">
         <Annotation Term="Common.DraftNode">
           <Record Type="Common.DraftNodeType">
@@ -664,6 +702,9 @@
       </Annotations>
       <Annotations Target="Sourcing.Item/DraftAdministrativeData">
         <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Supplier">
+        <Annotation Term="Core.Description" String="Aspect to capture changes by user and name&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-managed"/>
       </Annotations>
       <Annotations Target="Sourcing.EntityContainer/Supplier">
         <Annotation Term="Common.DraftNode">
@@ -715,6 +756,44 @@
       <Annotations Target="Sourcing.Supplier/DraftAdministrativeData">
         <Annotation Term="UI.Hidden" Bool="true"/>
       </Annotations>
+      <Annotations Target="Sourcing.EntityContainer/Terms">
+        <Annotation Term="Common.DraftNode">
+          <Record Type="Common.DraftNodeType">
+            <PropertyValue Property="PreparationAction" String="Sourcing.draftPrepare"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="Sourcing.Terms/IsActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Terms/HasActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Terms/HasDraftEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Terms/DraftAdministrativeData">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.EntityContainer/ItemTerms">
+        <Annotation Term="Common.DraftNode">
+          <Record Type="Common.DraftNodeType">
+            <PropertyValue Property="PreparationAction" String="Sourcing.draftPrepare"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="Sourcing.ItemTerms/IsActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.ItemTerms/HasActiveEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.ItemTerms/HasDraftEntity">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.ItemTerms/DraftAdministrativeData">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+      </Annotations>
       <Annotations Target="Sourcing.MessageBoard">
         <Annotation Term="UI.CreateHidden" Bool="true"/>
         <Annotation Term="UI.LineItem">
@@ -733,6 +812,7 @@
             </Record>
           </Collection>
         </Annotation>
+        <Annotation Term="Core.Description" String="Aspect to capture changes by user and name&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-managed"/>
       </Annotations>
       <Annotations Target="Sourcing.EntityContainer/MessageBoard">
         <Annotation Term="UI.CreateHidden" Bool="true"/>

@@ -8,7 +8,9 @@ DROP VIEW IF EXISTS Sourcing_Item;
 DROP VIEW IF EXISTS Sourcing_Event;
 DROP VIEW IF EXISTS Sourcing_Task;
 DROP VIEW IF EXISTS Sourcing_Project;
+DROP TABLE IF EXISTS Sourcing_Terms_drafts;
 DROP TABLE IF EXISTS Sourcing_Supplier_drafts;
+DROP TABLE IF EXISTS Sourcing_ItemTerms_drafts;
 DROP TABLE IF EXISTS Sourcing_Item_drafts;
 DROP TABLE IF EXISTS Sourcing_Event_drafts;
 DROP TABLE IF EXISTS Sourcing_Task_drafts;
@@ -247,6 +249,18 @@ CREATE TABLE Sourcing_Item_drafts (
   PRIMARY KEY(ID)
 ); 
 
+CREATE TABLE Sourcing_ItemTerms_drafts (
+  Item_ID NVARCHAR(36) NOT NULL,
+  id NVARCHAR(255) NOT NULL,
+  datatype NVARCHAR(255) NULL,
+  "VALUE" NVARCHAR(255) NULL,
+  IsActiveEntity BOOLEAN,
+  HasActiveEntity BOOLEAN,
+  HasDraftEntity BOOLEAN,
+  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
+  PRIMARY KEY(Item_ID, id)
+); 
+
 CREATE TABLE Sourcing_Supplier_drafts (
   ID NVARCHAR(36) NOT NULL,
   createdAt TIMESTAMP(7) NULL,
@@ -264,6 +278,18 @@ CREATE TABLE Sourcing_Supplier_drafts (
   HasDraftEntity BOOLEAN,
   DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
   PRIMARY KEY(ID)
+); 
+
+CREATE TABLE Sourcing_Terms_drafts (
+  Event_ID NVARCHAR(36) NULL,
+  id NVARCHAR(255) NOT NULL,
+  description NVARCHAR(255) NULL,
+  datatype NVARCHAR(255) NULL,
+  IsActiveEntity BOOLEAN,
+  HasActiveEntity BOOLEAN,
+  HasDraftEntity BOOLEAN,
+  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
+  PRIMARY KEY(id)
 ); 
 
 CREATE VIEW Sourcing_Project AS SELECT

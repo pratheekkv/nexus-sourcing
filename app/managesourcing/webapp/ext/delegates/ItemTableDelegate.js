@@ -1,28 +1,33 @@
 sap.ui.define([
     "sap/ui/mdc/TableDelegate",
     "sap/ui/mdc/field/FieldBase"
-], function (TableDelegate, FieldBase) {
+], function (TableDelegate, , FieldBase) {
     "use strict";
 
-        var MyTableDelegate = Object.assign({}, TableDelegate);
+        var MyTableDelegate = Object.assign({}, DelegateV4);
 
 
-        MyTableDelegate.fetchProperties = function (oTable) {
+        MyTableDelegate.fetchProperties = async function (oTable) {
             var aProperties = [];
-            var oModel = oTable.getModel("yourJSONModel");
-            var oData = oModel.getData();
-
-            // Assuming the JSON model has a 'columns' array with definitions
-            if (oData && oData.columns) {
-                oData.columns.forEach(function (oColumnDef) {
-                    aProperties.push({
-                        name: oColumnDef.name,
-                        path: oColumnDef.path,
-                        label: oColumnDef.label,
-                        type: oColumnDef.type // You can handle specific types as needed
-                    });
-                });
+            var oContext = oTable.getBindingContext();
+            try{
+            var aTerms = await oContext?.requestObject("terms");
+            } catch(err){
+                
             }
+
+
+            // // Assuming the JSON model has a 'columns' array with definitions
+            // if (oData && oData.columns) {
+            //     oData.columns.forEach(function (oColumnDef) {
+            //         aProperties.push({
+            //             name: oColumnDef.name,
+            //             path: oColumnDef.path,
+            //             label: oColumnDef.label,
+            //             type: oColumnDef.type // You can handle specific types as needed
+            //         });
+            //     });
+            // }
 
             return Promise.resolve(aProperties);
         };
@@ -40,6 +45,12 @@ sap.ui.define([
             });
 
             oTable.addColumn(oColumn);
+        };
+
+        MyTableDelegate.updateBindingInfo = function (oTable, oBindingInfo) {
+ 
+            TableDelegate.updateBindingInfo.call(MyTableDelegate, oTable, oBindingInfo);
+            oBindingInfo.path = oTable.getPayload().bindingPath;
         };
 
         return MyTableDelegate;
