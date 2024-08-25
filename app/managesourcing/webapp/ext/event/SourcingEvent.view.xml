@@ -1,22 +1,47 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc" xmlns:core="sap.ui.core" xmlns:table="sap.ui.mdc.table"
-controllerName="managesourcing.ext.event.SourcingEvent"
-modelContextChange="onModelContextChange">
-    <mdc:Table
-        id="treeTable"
-        type="TreeTable"
-        delegate='{
-            "name": "managesourcing/ext/delegates/ItemTableDelegate"
-        }'
-
-        selectionMode="None"
-        showRowCount="false"
-        enableExport="true"
-        p13nMode="Column,Sort"
-        header="Your Tree Table Header"
-        width="100%">
+    xmlns:layout="sap.uxap"
+    controllerName="managesourcing.ext.event.SourcingEvent"
+    modelContextChange="onModelContextChange">
+    
+    <layout:ObjectPageLayout
+        id="objectPageLayout"
+        headerTitle="{Title for your Object Page}"
+        useIconTabBar="true"
+        enableLazyLoading="true">
         
-        <mdc:columns>
-            <!-- Columns will be added dynamically by the delegate -->
-        </mdc:columns>
-    </mdc:Table>
+        <layout:sections>
+            <layout:ObjectPageSection
+                title="Table Section">
+                
+                <layout:subSections>
+                    <layout:ObjectPageSubSection
+                        title="Subsection with Tree Table" id="treeTableSubSection">
+                        
+                        <layout:blocks>
+                            <mdc:Table
+                                id="treeTable"
+                                type="TreeTable"
+                                delegate='{
+                                    "name": "managesourcing/ext/delegates/ItemTableDelegate"
+                                }'
+                                selectionMode="None"
+                                showRowCount="false"
+                                enableExport="true"
+                                p13nMode="Column,Sort"
+                                header="Your Tree Table Header"
+                                width="100%">
+                                
+                                <mdc:columns>
+                                    <!-- Columns will be added dynamically by the delegate -->
+                                </mdc:columns>
+                            </mdc:Table>
+                        </layout:blocks>
+                        
+                    </layout:ObjectPageSubSection>
+                </layout:subSections>
+                
+            </layout:ObjectPageSection>
+        </layout:sections>
+    </layout:ObjectPageLayout>
 </mvc:View>
+

@@ -21,6 +21,24 @@ sap.ui.define(
             
             onModelContextChange: function(oEvent){
                 debugger;
+            },
+
+            onSubSectionEntered: function (oEvent) {
+                var sSubSectionId = oEvent.getParameter("id");
+                
+                if (sSubSectionId === this.getView().byId("treeTableSubSection").getId()) {
+                    // Perform lazy loading, e.g., binding the table model, etc.
+                    var oTable = this.byId("treeTable");
+                    if (!oTable.getBinding("rows")) {
+                        
+                        oTable.bindRows({
+                            path: this.getView().getBindingContext().getPath + '/items',
+                            parameters: {
+                                $expand: "terms" 
+                            }
+                        });
+                    }
+                }
             }
 
         });

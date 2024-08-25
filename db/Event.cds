@@ -18,6 +18,7 @@ entity Event : cuid, managed {
   awardDate: Date;
   items: Composition of many Item on items.event = $self;
   suppliers: Composition of many Supplier on suppliers.event = $self;
+  terms: Composition of many ItemTerms on terms.Item = $self;
 }
 
 
