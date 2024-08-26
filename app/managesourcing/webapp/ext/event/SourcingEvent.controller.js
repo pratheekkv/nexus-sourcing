@@ -1,11 +1,14 @@
 sap.ui.define(
     [
-        'sap/fe/core/PageController'
+        'sap/fe/core/PageController',
+         'managesourcing/formatter/TermFormatter'
     ],
-    function(PageController) {
+    function(PageController, TermFormatter) {
         'use strict';
 
         return PageController.extend('managesourcing.ext.event.SourcingEvent', {
+
+            formatter : TermFormatter,
 
             onInit: function () {
                PageController.prototype.onInit.apply(this);
