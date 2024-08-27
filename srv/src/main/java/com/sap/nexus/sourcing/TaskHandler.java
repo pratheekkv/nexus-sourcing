@@ -61,7 +61,7 @@ private static final String EXPANDED = "expanded";
 
 private boolean calcLimitedDescendantsCount;
 
-@Before(event = CqnService.EVENT_READ)
+@Before(event = CqnService.EVENT_READ, entity = Task_.CDS_NAME)
 public void beforeRead(CdsReadEventContext event) {
     CqnSelect cqn = event.getCqn();
     if (!CqnAnalyzer.isCountQuery(cqn)) {
@@ -72,7 +72,7 @@ public void beforeRead(CdsReadEventContext event) {
     }
 }
 
-@After(event = CqnService.EVENT_READ)
+@After(event = CqnService.EVENT_READ, entity = Task_.CDS_NAME)
 public void afterRead(CdsReadEventContext event) {
     Result result = event.getResult();
     CqnSelect cqn = event.getCqn();

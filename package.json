@@ -10,5 +10,8 @@
   "devDependencies": {
     "@sap/cds-dk": "^8",
     "@sap/ux-specification": "^1.120.17"
+  },
+  "dependencies": {
+    "@sap/xssec": "^4.2.1"
   }
 }

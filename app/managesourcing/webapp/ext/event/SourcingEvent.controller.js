@@ -1,14 +1,11 @@
 sap.ui.define(
     [
-        'sap/fe/core/PageController',
-         'managesourcing/formatter/TermFormatter'
+        'sap/fe/core/PageController'
     ],
-    function(PageController, TermFormatter) {
+    function(PageController) {
         'use strict';
 
         return PageController.extend('managesourcing.ext.event.SourcingEvent', {
-
-            formatter : TermFormatter,
 
             onInit: function () {
                PageController.prototype.onInit.apply(this);
@@ -18,10 +15,6 @@ sap.ui.define(
              _onRouteMatched: function (oEvent) {
                 var oModel = this.getView().getModel();
             }, 
-            
-            formItermTerms : function(oData){
-                debugger;
-            },
             
             onModelContextChange: async function(oEvent){
                 var oContext = this.getView()?.getBindingContext();

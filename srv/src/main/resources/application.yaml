@@ -6,6 +6,10 @@ spring:
     init:
       schema-locations: classpath:schema-h2.sql
   web.resources.static-locations: file:./app/
+logging:
+  level:
+    com.sap.cds.persistence.sql: DEBUG
+    com.sap.cds.util.transformations: DEBUG  
 cds:
   security:
     mock:

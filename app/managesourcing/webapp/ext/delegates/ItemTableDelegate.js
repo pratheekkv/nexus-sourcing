@@ -1,8 +1,7 @@
 sap.ui.define([
     "sap/ui/mdc/TableDelegate",
     "sap/ui/mdc/Field",
-    "sap/ui/model/json/JSONModel",
-    'managesourcing/formatter/TermFormatter'
+    "sap/ui/model/json/JSONModel"
 ], function (TableDelegate,  FieldBase, JSONModel) {
     "use strict";
 
@@ -29,9 +28,6 @@ sap.ui.define([
             }
         };
 
-        MyTableDelegate.formItermTerms = function (a,b,c) {
-            debugger;
-		};
         MyTableDelegate.fetchProperties = async function (oTable) {
 
             return fetchModel(oTable)
@@ -48,11 +44,11 @@ sap.ui.define([
                         aProperties.push({
                             key: id,
                             label: description,
-                            path: "{path:'terms', formatter: '.formItermTerms'}",
+                            path: "",
                             dataType: "sap.ui.model.type." + datatype
                         })
         
-                        // oTable.addColumn(_addColumn(oTable,oTable.getId() + "---col-" + id, id));
+                        oTable.addColumn(_addColumn(oTable,oTable.getId() + "---col-" + id, id));
                       }
                         oTable.rebind();
                         return aProperties;
@@ -70,15 +66,23 @@ sap.ui.define([
          */
        var _addColumn = function (oTable,sId, sPropertyKey) {
  
-        // var field = new FieldBase({ value: "{parts: [ {path: 'id'}, {path: 'terms'}, {path: '{termModel>/id}'} ], formatter: '.formItermTerms'}"},  
-        //     { formItermTerms : function (a,b,c) {
-        //         debugger;
-        //     }
-        //     });
-
-        var field = new FieldBase({ value: { parts : [ 'terms', 'description' ], formatter: function (a,b,c)  {
-                    debugger;
-                }}});        
+        var field = new FieldBase({ value: { 
+                                                path : 'terms', 
+                                                formatter: function (aTerms)  {
+                                                    if(!aTerms){
+                                                        return "X";
+                                                    }
+                                                    var result = aTerms.filter(term => {
+                                                        return term.id === this.key
+                                                      });
+                                                      if(result.length < 1){
+                                                        return;
+                                                      }
+                                                      return parseInt(result[0].value);
+                                                 }.bind({key : sPropertyKey})
+                                            },
+                                    editMode: "{=${ui>isEditable}=== true ? 'Editable' : 'ReadOnly'}"
+               });        
 
         var oColumn = new sap.ui.mdc.table.Column(sId,{
                 header: sPropertyKey,
@@ -109,7 +113,7 @@ sap.ui.define([
                 return;
             }
             oBindingInfo.path = oTable.getBindingContext().getPath() + oTable.getPayload().bindingPath;
-            oBindingInfo.parameters.expand = 'terms';
+            oBindingInfo.parameters.$expand = 'terms($select=id,value)';
         };
 
         return MyTableDelegate;
