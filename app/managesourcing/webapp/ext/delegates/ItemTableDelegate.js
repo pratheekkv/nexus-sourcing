@@ -52,7 +52,7 @@ sap.ui.define([
                             dataType: "sap.ui.model.type." + datatype
                         })
         
-                        oTable.addColumn(_addColumn(oTable,oTable.getId() + "---col-" + id, id));
+                        // oTable.addColumn(_addColumn(oTable,oTable.getId() + "---col-" + id, id));
                       }
                         oTable.rebind();
                         return aProperties;
@@ -70,11 +70,15 @@ sap.ui.define([
          */
        var _addColumn = function (oTable,sId, sPropertyKey) {
  
-        var field = new FieldBase({ value: "{ parts: [ {path: 'id'}, {path: 'terms'}, {path: '{termModel>/id}'} ], formatter: '.formItermTerms'}" },  
-            { formItermTerms : function (a,b,c) {
-                debugger;
-            }
-            });
+        // var field = new FieldBase({ value: "{parts: [ {path: 'id'}, {path: 'terms'}, {path: '{termModel>/id}'} ], formatter: '.formItermTerms'}"},  
+        //     { formItermTerms : function (a,b,c) {
+        //         debugger;
+        //     }
+        //     });
+
+        var field = new FieldBase({ value: { parts : [ 'terms', 'description' ], formatter: function (a,b,c)  {
+                    debugger;
+                }}});        
 
         var oColumn = new sap.ui.mdc.table.Column(sId,{
                 header: sPropertyKey,
