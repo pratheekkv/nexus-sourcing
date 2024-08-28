@@ -18,9 +18,6 @@
   <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
     <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
   </edmx:Reference>
-  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
-    <edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
-  </edmx:Reference>
   <edmx:DataServices>
     <Schema Namespace="Sourcing" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityContainer Name="EntityContainer">
@@ -32,6 +29,8 @@
         </EntitySet>
         <EntitySet Name="Task" EntityType="Sourcing.Task">
           <NavigationPropertyBinding Path="sourcingProject" Target="Project"/>
+          <NavigationPropertyBinding Path="type" Target="TaskType"/>
+          <NavigationPropertyBinding Path="status" Target="TaskStatus"/>
           <NavigationPropertyBinding Path="parent" Target="Task"/>
           <NavigationPropertyBinding Path="events" Target="Event"/>
           <NavigationPropertyBinding Path="SiblingEntity" Target="Task"/>
@@ -45,8 +44,9 @@
           <NavigationPropertyBinding Path="SiblingEntity" Target="Event"/>
         </EntitySet>
         <EntitySet Name="Item" EntityType="Sourcing.Item">
-          <NavigationPropertyBinding Path="event" Target="Event"/>
           <NavigationPropertyBinding Path="terms" Target="ItemTerms"/>
+          <NavigationPropertyBinding Path="event" Target="Event"/>
+          <NavigationPropertyBinding Path="parent" Target="Item"/>
           <NavigationPropertyBinding Path="SiblingEntity" Target="Item"/>
         </EntitySet>
         <EntitySet Name="Supplier" EntityType="Sourcing.Supplier">
@@ -64,6 +64,8 @@
         <EntitySet Name="MessageBoard" EntityType="Sourcing.MessageBoard">
           <NavigationPropertyBinding Path="project" Target="Project"/>
         </EntitySet>
+        <EntitySet Name="TaskType" EntityType="Sourcing.TaskType"/>
+        <EntitySet Name="TaskStatus" EntityType="Sourcing.TaskStatus"/>
       </EntityContainer>
       <EntityType Name="Project">
         <Key>
@@ -79,7 +81,7 @@
         <Property Name="description" Type="Edm.String"/>
         <Property Name="isQuickProject" Type="Edm.Boolean"/>
         <Property Name="state" Type="Edm.Int32"/>
-        <Property Name="isTest" Type="Edm.Int32"/>
+        <Property Name="isTest" Type="Edm.Boolean"/>
         <Property Name="startDate" Type="Edm.Date"/>
         <Property Name="dueDate" Type="Edm.Date"/>
         <Property Name="targetSaving" Type="Edm.String" MaxLength="3"/>
@@ -114,8 +116,14 @@
         </NavigationProperty>
         <Property Name="sourcingProject_ID" Type="Edm.Guid"/>
         <Property Name="description" Type="Edm.String"/>
-        <Property Name="type" Type="Edm.String"/>
-        <Property Name="status" Type="Edm.String"/>
+        <NavigationProperty Name="type" Type="Sourcing.TaskType">
+          <ReferentialConstraint Property="type_id" ReferencedProperty="id"/>
+        </NavigationProperty>
+        <Property Name="type_id" Type="Edm.String"/>
+        <NavigationProperty Name="status" Type="Sourcing.TaskStatus">
+          <ReferentialConstraint Property="status_id" ReferencedProperty="id"/>
+        </NavigationProperty>
+        <Property Name="status_id" Type="Edm.String"/>
         <Property Name="owner" Type="Edm.String"/>
         <Property Name="dueDate" Type="Edm.Date"/>
         <Property Name="approverReviewer" Type="Edm.String"/>
@@ -183,14 +191,21 @@
           <PropertyRef Name="IsActiveEntity"/>
         </Key>
         <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="node_id" Type="Edm.String"/>
+        <Property Name="parent_id" Type="Edm.String"/>
+        <Property Name="LimitedDescendantCount" Type="Edm.Int64"/>
+        <Property Name="DistanceFromRoot" Type="Edm.Int64"/>
+        <Property Name="DrillState" Type="Edm.String"/>
+        <Property Name="Matched" Type="Edm.Boolean"/>
+        <Property Name="MatchedDescendantCount" Type="Edm.Int64"/>
+        <NavigationProperty Name="terms" Type="Collection(Sourcing.ItemTerms)" Partner="Item">
+          <OnDelete Action="Cascade"/>
+        </NavigationProperty>
         <NavigationProperty Name="event" Type="Sourcing.Event" Partner="items">
           <ReferentialConstraint Property="event_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
         <Property Name="event_ID" Type="Edm.Guid"/>
-        <Property Name="description" Type="Edm.String"/>
-        <NavigationProperty Name="terms" Type="Collection(Sourcing.ItemTerms)" Partner="Item">
-          <OnDelete Action="Cascade"/>
-        </NavigationProperty>
+        <NavigationProperty Name="parent" Type="Sourcing.Item"/>
         <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
         <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
         <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
@@ -225,13 +240,14 @@
       <EntityType Name="Terms">
         <Key>
           <PropertyRef Name="id"/>
+          <PropertyRef Name="Event_ID"/>
           <PropertyRef Name="IsActiveEntity"/>
         </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false"/>
         <NavigationProperty Name="Event" Type="Sourcing.Event" Partner="terms">
           <ReferentialConstraint Property="Event_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
-        <Property Name="Event_ID" Type="Edm.Guid"/>
-        <Property Name="id" Type="Edm.String" Nullable="false"/>
+        <Property Name="Event_ID" Type="Edm.Guid" Nullable="false"/>
         <Property Name="description" Type="Edm.String"/>
         <Property Name="datatype" Type="Edm.String"/>
         <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
@@ -242,15 +258,15 @@
       </EntityType>
       <EntityType Name="ItemTerms">
         <Key>
-          <PropertyRef Name="Item_ID"/>
           <PropertyRef Name="id"/>
+          <PropertyRef Name="Item_ID"/>
           <PropertyRef Name="IsActiveEntity"/>
         </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false"/>
         <NavigationProperty Name="Item" Type="Sourcing.Item" Partner="terms">
           <ReferentialConstraint Property="Item_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
         <Property Name="Item_ID" Type="Edm.Guid" Nullable="false"/>
-        <Property Name="id" Type="Edm.String" Nullable="false"/>
         <Property Name="datatype" Type="Edm.String"/>
         <Property Name="value" Type="Edm.String"/>
         <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
@@ -275,6 +291,20 @@
           <ReferentialConstraint Property="project_ID" ReferencedProperty="ID"/>
         </NavigationProperty>
         <Property Name="project_ID" Type="Edm.Guid"/>
+      </EntityType>
+      <EntityType Name="TaskType">
+        <Key>
+          <PropertyRef Name="id"/>
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false"/>
+        <Property Name="description" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="TaskStatus">
+        <Key>
+          <PropertyRef Name="id"/>
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false"/>
+        <Property Name="description" Type="Edm.String"/>
       </EntityType>
       <EntityType Name="DraftAdministrativeData">
         <Key>
@@ -558,18 +588,42 @@
         <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
         <Annotation Term="Common.Label" String="{i18n>ChangedBy}"/>
       </Annotations>
-      <Annotations Target="Sourcing.Task/type">
-        <Annotation Term="Validation.AllowedValues">
-          <Collection>
-            <Record Type="Validation.AllowedValue">
-              <Annotation Term="Core.SymbolicName" String="phase"/>
-              <PropertyValue Property="Value" String="Phase"/>
-            </Record>
-            <Record Type="Validation.AllowedValue">
-              <Annotation Term="Core.SymbolicName" String="task"/>
-              <PropertyValue Property="Value" String="Task"/>
-            </Record>
-          </Collection>
+      <Annotations Target="Sourcing.Task/type_id">
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="Label" String="TaskType"/>
+            <PropertyValue Property="CollectionPath" String="TaskType"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="type_id"/>
+                  <PropertyValue Property="ValueListProperty" String="id"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="description"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="Sourcing.Task/status_id">
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="Label" String="TaskStatus"/>
+            <PropertyValue Property="CollectionPath" String="TaskStatus"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="status_id"/>
+                  <PropertyValue Property="ValueListProperty" String="id"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="description"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
         </Annotation>
       </Annotations>
       <Annotations Target="Sourcing.Task/LimitedDescendantCount">
@@ -679,9 +733,50 @@
         <Annotation Term="UI.Hidden" Bool="true"/>
       </Annotations>
       <Annotations Target="Sourcing.Item">
+        <Annotation Term="Hierarchy.RecursiveHierarchy" Qualifier="PhaseHierarchy">
+          <Record Type="Hierarchy.RecursiveHierarchyType">
+            <PropertyValue Property="LimitedDescendantCount" Path="LimitedDescendantCount"/>
+            <PropertyValue Property="DistanceFromRoot" Path="DistanceFromRoot"/>
+            <PropertyValue Property="DrillState" Path="DrillState"/>
+            <PropertyValue Property="Matched" Path="Matched"/>
+            <PropertyValue Property="MatchedDescendantCount" Path="MatchedDescendantCount"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Aggregation.RecursiveHierarchy" Qualifier="PhaseHierarchy">
+          <Record Type="Aggregation.RecursiveHierarchyType">
+            <PropertyValue Property="NodeProperty" PropertyPath="node_id"/>
+            <PropertyValue Property="ParentNavigationProperty" NavigationPropertyPath="parent"/>
+          </Record>
+        </Annotation>
         <Annotation Term="Core.Description" String="Aspect for entities with canonical universal IDs&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-cuid"/>
       </Annotations>
       <Annotations Target="Sourcing.EntityContainer/Item">
+        <Annotation Term="Capabilities.FilterRestrictions">
+          <Record Type="Capabilities.FilterRestrictionsType">
+            <PropertyValue Property="NonFilterableProperties">
+              <Collection>
+                <PropertyPath>LimitedDescendantCount</PropertyPath>
+                <PropertyPath>DistanceFromRoot</PropertyPath>
+                <PropertyPath>DrillState</PropertyPath>
+                <PropertyPath>Matched</PropertyPath>
+                <PropertyPath>MatchedDescendantCount</PropertyPath>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.SortRestrictions">
+          <Record Type="Capabilities.SortRestrictionsType">
+            <PropertyValue Property="NonSortableProperties">
+              <Collection>
+                <PropertyPath>LimitedDescendantCount</PropertyPath>
+                <PropertyPath>DistanceFromRoot</PropertyPath>
+                <PropertyPath>DrillState</PropertyPath>
+                <PropertyPath>Matched</PropertyPath>
+                <PropertyPath>MatchedDescendantCount</PropertyPath>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
         <Annotation Term="Common.DraftNode">
           <Record Type="Common.DraftNodeType">
             <PropertyValue Property="PreparationAction" String="Sourcing.draftPrepare"/>
@@ -690,6 +785,21 @@
       </Annotations>
       <Annotations Target="Sourcing.Item/ID">
         <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Item/LimitedDescendantCount">
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Item/DistanceFromRoot">
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Item/DrillState">
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Item/Matched">
+        <Annotation Term="Core.Computed" Bool="true"/>
+      </Annotations>
+      <Annotations Target="Sourcing.Item/MatchedDescendantCount">
+        <Annotation Term="Core.Computed" Bool="true"/>
       </Annotations>
       <Annotations Target="Sourcing.Item/IsActiveEntity">
         <Annotation Term="UI.Hidden" Bool="true"/>

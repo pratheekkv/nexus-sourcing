@@ -9,8 +9,8 @@ entity Task :cuid, managed {
   node_id : String;
   sourcingProject: Association to one SourcingProject;
   description: String;
-  type: String enum { phase = 'Phase'; task = 'Task'; };
-  status: String;
+  type: Association to TaskType;
+  status: Association to TaskStatus;
   owner: String;
   dueDate: Date;
   approverReviewer: String;
@@ -35,3 +35,16 @@ entity Task :cuid, managed {
   parent : Association to one Task on parent.node_id = parent_id;
   events: Association to one Event;
 }
+
+@cds.odata.valuelist
+entity TaskType {
+  key id : String;
+  description : String;  
+}
+
+@cds.odata.valuelist
+entity TaskStatus {
+  key id : String;
+  description : String;  
+}
+

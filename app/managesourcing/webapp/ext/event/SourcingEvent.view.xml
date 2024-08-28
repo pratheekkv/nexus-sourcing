@@ -27,6 +27,7 @@
 						<layout:blocks>
                             <mdc:Table
                                 id="treeTable"
+                                type="TreeTable"
                                 delegate="{
                                     name: 'managesourcing/ext/delegates/ItemTableDelegate',
                                     payload: {

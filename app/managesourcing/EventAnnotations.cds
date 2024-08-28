@@ -34,3 +34,35 @@ annotate service.Event with @(UI: {
     ]
     
 });
+
+annotate service.Item with @(
+
+Hierarchy.RecursiveHierarchy #PhaseHierarchy: {
+  $Type                 : 'Hierarchy.RecursiveHierarchyType',
+  ExternalKey           : null,
+  LimitedDescendantCount: LimitedDescendantCount,
+  DistanceFromRoot      : DistanceFromRoot,
+  DrillState            : DrillState,
+  Matched               : Matched,
+  MatchedDescendantCount: MatchedDescendantCount
+},
+Aggregation.RecursiveHierarchy #PhaseHierarchy: {
+    NodeProperty            : node_id,
+    ParentNavigationProperty: parent
+},
+Capabilities.FilterRestrictions : {
+    NonFilterableProperties: [
+      LimitedDescendantCount,
+      DistanceFromRoot,
+      DrillState,
+      Matched,
+      MatchedDescendantCount
+  ]},
+Capabilities.SortRestrictions : {
+    NonSortableProperties: [
+      LimitedDescendantCount,
+      DistanceFromRoot,
+      DrillState,
+      Matched,
+      MatchedDescendantCount
+  ]});

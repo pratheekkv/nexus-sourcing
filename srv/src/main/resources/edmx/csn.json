@@ -182,7 +182,7 @@
           "type": "cds.Integer"
         },
         "isTest": {
-          "type": "cds.Integer"
+          "type": "cds.Boolean"
         },
         "startDate": {
           "type": "cds.Date"
@@ -628,18 +628,42 @@
           "type": "cds.String"
         },
         "type": {
-          "type": "cds.String",
-          "enum": {
-            "phase": {
-              "val": "Phase"
-            },
-            "task": {
-              "val": "Task"
+          "type": "cds.Association",
+          "target": "Sourcing.TaskType",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "type_id"
             }
+          ],
+          "@Common.ValueList.viaAssociation": {
+            "=": "type"
           }
         },
+        "type_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "type"
+        },
         "status": {
-          "type": "cds.String"
+          "type": "cds.Association",
+          "target": "Sourcing.TaskStatus",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "status_id"
+            }
+          ],
+          "@Common.ValueList.viaAssociation": {
+            "=": "status"
+          }
+        },
+        "status_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "status"
         },
         "owner": {
           "type": "cds.String"
@@ -1154,6 +1178,63 @@
     "Sourcing.Item": {
       "kind": "entity",
       "doc": "Aspect for entities with canonical universal IDs\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-cuid",
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.$Type": "Hierarchy.RecursiveHierarchyType",
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.ExternalKey": null,
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.LimitedDescendantCount": {
+        "=": "LimitedDescendantCount"
+      },
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.DistanceFromRoot": {
+        "=": "DistanceFromRoot"
+      },
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.DrillState": {
+        "=": "DrillState"
+      },
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.Matched": {
+        "=": "Matched"
+      },
+      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.MatchedDescendantCount": {
+        "=": "MatchedDescendantCount"
+      },
+      "@Aggregation.RecursiveHierarchy#PhaseHierarchy.NodeProperty": {
+        "=": "node_id"
+      },
+      "@Aggregation.RecursiveHierarchy#PhaseHierarchy.ParentNavigationProperty": {
+        "=": "parent"
+      },
+      "@Capabilities.FilterRestrictions.NonFilterableProperties": [
+        {
+          "=": "LimitedDescendantCount"
+        },
+        {
+          "=": "DistanceFromRoot"
+        },
+        {
+          "=": "DrillState"
+        },
+        {
+          "=": "Matched"
+        },
+        {
+          "=": "MatchedDescendantCount"
+        }
+      ],
+      "@Capabilities.SortRestrictions.NonSortableProperties": [
+        {
+          "=": "LimitedDescendantCount"
+        },
+        {
+          "=": "DistanceFromRoot"
+        },
+        {
+          "=": "DrillState"
+        },
+        {
+          "=": "Matched"
+        },
+        {
+          "=": "MatchedDescendantCount"
+        }
+      ],
       "projection": {
         "from": {
           "ref": [
@@ -1165,6 +1246,58 @@
         "ID": {
           "key": true,
           "type": "cds.UUID"
+        },
+        "node_id": {
+          "type": "cds.String"
+        },
+        "parent_id": {
+          "type": "cds.String"
+        },
+        "LimitedDescendantCount": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Integer64"
+        },
+        "DistanceFromRoot": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Integer64"
+        },
+        "DrillState": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.String"
+        },
+        "Matched": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Boolean"
+        },
+        "MatchedDescendantCount": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Integer64"
+        },
+        "terms": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Sourcing.ItemTerms",
+          "on": [
+            {
+              "ref": [
+                "terms",
+                "Item"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
         },
         "event": {
           "type": "cds.Association",
@@ -1185,26 +1318,23 @@
           "type": "cds.UUID",
           "@odata.foreignKey4": "event"
         },
-        "description": {
-          "type": "cds.String"
-        },
-        "terms": {
-          "type": "cds.Composition",
+        "parent": {
+          "type": "cds.Association",
           "cardinality": {
-            "max": "*"
+            "max": 1
           },
-          "target": "Sourcing.ItemTerms",
+          "target": "Sourcing.Item",
           "on": [
             {
               "ref": [
-                "terms",
-                "Item"
+                "parent",
+                "node_id"
               ]
             },
             "=",
             {
               "ref": [
-                "$self"
+                "parent_id"
               ]
             }
           ]
@@ -1526,7 +1656,12 @@
         }
       },
       "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
         "Event": {
+          "key": true,
           "type": "cds.Association",
           "cardinality": {
             "max": 1
@@ -1543,11 +1678,8 @@
         },
         "Event_ID": {
           "type": "cds.UUID",
-          "@odata.foreignKey4": "Event"
-        },
-        "id": {
-          "key": true,
-          "type": "cds.String"
+          "@odata.foreignKey4": "Event",
+          "key": true
         },
         "description": {
           "type": "cds.String"
@@ -1612,6 +1744,19 @@
             {
               "ref": [
                 "SiblingEntity",
+                "Event_ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "Event_ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "SiblingEntity",
                 "id"
               ]
             },
@@ -1662,6 +1807,10 @@
         }
       },
       "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
         "Item": {
           "key": true,
           "type": "cds.Association",
@@ -1682,10 +1831,6 @@
           "type": "cds.UUID",
           "@odata.foreignKey4": "Item",
           "key": true
-        },
-        "id": {
-          "key": true,
-          "type": "cds.String"
         },
         "datatype": {
           "type": "cds.String"
@@ -1750,26 +1895,26 @@
             {
               "ref": [
                 "SiblingEntity",
-                "id"
+                "Item_ID"
               ]
             },
             "=",
             {
               "ref": [
-                "id"
+                "Item_ID"
               ]
             },
             "and",
             {
               "ref": [
                 "SiblingEntity",
-                "Item_ID"
+                "id"
               ]
             },
             "=",
             {
               "ref": [
-                "Item_ID"
+                "id"
               ]
             },
             "and",
@@ -1936,6 +2081,46 @@
         }
       }
     },
+    "Sourcing.TaskType": {
+      "kind": "entity",
+      "@cds.odata.valuelist": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "com.sap.sourcing.db.TaskType"
+          ]
+        }
+      },
+      "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
+        }
+      }
+    },
+    "Sourcing.TaskStatus": {
+      "kind": "entity",
+      "@cds.odata.valuelist": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "com.sap.sourcing.db.TaskStatus"
+          ]
+        }
+      },
+      "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
+        }
+      }
+    },
     "com.sap.sourcing.db.SourcingProject": {
       "kind": "entity",
       "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
@@ -2025,7 +2210,7 @@
           "type": "cds.Integer"
         },
         "isTest": {
-          "type": "cds.Integer"
+          "type": "cds.Boolean"
         },
         "startDate": {
           "type": "cds.Date"
@@ -2493,27 +2678,36 @@
           "key": true,
           "type": "cds.UUID"
         },
-        "event": {
-          "type": "cds.Association",
-          "cardinality": {
-            "max": 1
-          },
-          "target": "com.sap.sourcing.db.Event",
-          "keys": [
-            {
-              "ref": [
-                "ID"
-              ],
-              "$generatedFieldName": "event_ID"
-            }
-          ]
-        },
-        "event_ID": {
-          "type": "cds.UUID",
-          "@odata.foreignKey4": "event"
-        },
-        "description": {
+        "node_id": {
           "type": "cds.String"
+        },
+        "parent_id": {
+          "type": "cds.String"
+        },
+        "LimitedDescendantCount": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Integer64"
+        },
+        "DistanceFromRoot": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Integer64"
+        },
+        "DrillState": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.String"
+        },
+        "Matched": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Boolean"
+        },
+        "MatchedDescendantCount": {
+          "@Core.Computed": true,
+          "virtual": true,
+          "type": "cds.Integer64"
         },
         "terms": {
           "type": "cds.Composition",
@@ -2535,12 +2729,56 @@
               ]
             }
           ]
+        },
+        "event": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "com.sap.sourcing.db.Event",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "$generatedFieldName": "event_ID"
+            }
+          ]
+        },
+        "event_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "event"
+        },
+        "parent": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "com.sap.sourcing.db.Item",
+          "on": [
+            {
+              "ref": [
+                "parent",
+                "node_id"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "parent_id"
+              ]
+            }
+          ]
         }
       }
     },
     "com.sap.sourcing.db.ItemTerms": {
       "kind": "entity",
       "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
         "Item": {
           "key": true,
           "type": "cds.Association",
@@ -2561,10 +2799,6 @@
           "type": "cds.UUID",
           "@odata.foreignKey4": "Item",
           "key": true
-        },
-        "id": {
-          "key": true,
-          "type": "cds.String"
         },
         "datatype": {
           "type": "cds.String"
@@ -2689,7 +2923,12 @@
     "com.sap.sourcing.db.Terms": {
       "kind": "entity",
       "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
         "Event": {
+          "key": true,
           "type": "cds.Association",
           "cardinality": {
             "max": 1
@@ -2706,11 +2945,8 @@
         },
         "Event_ID": {
           "type": "cds.UUID",
-          "@odata.foreignKey4": "Event"
-        },
-        "id": {
-          "key": true,
-          "type": "cds.String"
+          "@odata.foreignKey4": "Event",
+          "key": true
         },
         "description": {
           "type": "cds.String"
@@ -2822,18 +3058,36 @@
           "type": "cds.String"
         },
         "type": {
-          "type": "cds.String",
-          "enum": {
-            "phase": {
-              "val": "Phase"
-            },
-            "task": {
-              "val": "Task"
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.TaskType",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "type_id"
             }
-          }
+          ]
+        },
+        "type_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "type"
         },
         "status": {
-          "type": "cds.String"
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.TaskStatus",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "status_id"
+            }
+          ]
+        },
+        "status_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "status"
         },
         "owner": {
           "type": "cds.String"
@@ -2906,6 +3160,32 @@
         "events_ID": {
           "type": "cds.UUID",
           "@odata.foreignKey4": "events"
+        }
+      }
+    },
+    "com.sap.sourcing.db.TaskType": {
+      "kind": "entity",
+      "@cds.odata.valuelist": true,
+      "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
+        }
+      }
+    },
+    "com.sap.sourcing.db.TaskStatus": {
+      "kind": "entity",
+      "@cds.odata.valuelist": true,
+      "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
         }
       }
     },

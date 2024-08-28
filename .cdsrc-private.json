@@ -1,0 +1,37 @@
+{
+  "requires": {
+    "[hybrid]": {
+      "db": {
+        "kind": "hana-cloud",
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.eu12.hana.ondemand.com",
+          "org": "providersaas",
+          "space": "dev",
+          "instance": "nexus-sourcing-db",
+          "key": "nexus-sourcing-db-key",
+          "resolved": false
+        },
+        "vcap": {
+          "label": "hana",
+          "plan": "hdi-shared"
+        }
+      },
+      "xsuaa": {
+        "binding": {
+          "type": "cf",
+          "apiEndpoint": "https://api.cf.eu12.hana.ondemand.com",
+          "org": "providersaas",
+          "space": "dev",
+          "instance": "nexus-sourcing-uaa",
+          "key": "nexus-sourcing-uaa-key",
+          "resolved": false
+        },
+        "kind": "xsuaa-auth",
+        "vcap": {
+          "name": "xsuaa"
+        }
+      }
+    }
+  }
+}

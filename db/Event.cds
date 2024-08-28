@@ -23,14 +23,29 @@ entity Event : cuid, managed {
 
 
 entity Item : cuid {
-  event: Association to one Event;
-  description: String;
+  node_id: String;
+
+  parent_id  : type of node_id;
+
+  virtual LimitedDescendantCount : Integer64;
+
+  virtual DistanceFromRoot       : Integer64;
+
+  virtual DrillState             : String;
+
+  virtual Matched                : Boolean;
+
+  virtual MatchedDescendantCount : Integer64;
+
   terms: Composition of many ItemTerms on terms.Item = $self;
+  event: Association to one Event;
+  parent : Association to one Item on parent.node_id = parent_id;
+
 }
 
 entity ItemTerms {
-  key Item: Association to one Item;
   key id : String;
+  key Item: Association to one Item;
   datatype : String;
   value : String;
 }
@@ -47,8 +62,8 @@ entity Supplier: cuid, managed {
 }
 
 entity Terms {
-  Event: Association to one Event;
   key id : String;
+  key Event: Association to one Event;
   description : String;  
   datatype : String;
 }

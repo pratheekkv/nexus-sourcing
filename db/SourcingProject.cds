@@ -10,7 +10,7 @@ entity SourcingProject : cuid, managed {
   description: String;
   isQuickProject: Boolean;
   state: Integer;
-  isTest: Integer;
+  isTest: Boolean;
   startDate : Date;
   dueDate : Date;
   targetSaving: String(3);

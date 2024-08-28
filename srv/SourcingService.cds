@@ -9,5 +9,7 @@ service Sourcing {
     entity Terms        as projection on db.Terms;
     entity ItemTerms    as projection on db.ItemTerms;
     entity MessageBoard as projection on db.MessageBoard;
+    entity TaskType     as projection on db.TaskType;
+    entity TaskStatus   as projection on db.TaskStatus;
 
 }
