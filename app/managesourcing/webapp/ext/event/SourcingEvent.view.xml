@@ -21,9 +21,9 @@
 		</layout:headerTitle>        
         
         <layout:sections>
-			<layout:ObjectPageSection titleUppercase="false" title="my section">
+			<layout:ObjectPageSection titleUppercase="false" title="Items">
 				<layout:subSections>
-					<layout:ObjectPageSubSection title="Section 1" mode="Expanded" titleUppercase="false">
+					<layout:ObjectPageSubSection title=" " mode="Expanded" titleUppercase="false">
 						<layout:blocks>
                             <mdc:Table
                                 id="treeTable"
@@ -37,7 +37,6 @@
                                 showRowCount="false"
                                 enableExport="true"
                                 p13nMode="Column,Sort"
-                                header="Items"
                                 width="100%">
                                 <mdc:columns>
                                     <table:Column id="regionVHNameColumn" header="Name">

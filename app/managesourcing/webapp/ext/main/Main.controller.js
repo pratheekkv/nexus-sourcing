@@ -24,38 +24,26 @@ sap.ui.define(
              },
 
              _onRouteMatched: function (oEvent) {
+                var name = oEvent.getParameter('name');
+                if (name !== "Details" && name !== "ProjectMain") {
+                    return;
+                }
                 var oModel = this.getView().getModel();
                 var oMetaModelLoaded = oModel.getMetaModel().requestObject("/Project");
                 oMetaModelLoaded.then(this._onMetadataLoaded.bind(this));
             },
 
             _onMetadataLoaded: async function () {
-                if (this._createDone) {
-                    return;
-                }
-                this._createDone = true;
-                var oContext = this.getView()?.getBindingContext();
-                if(oContext){
-                    return;
-                }
                 try {
                     await this._createNewDocument();
                 } catch (error) {
                     sap.m.MessageToast.show(error.toString());
-                } finally {
-                   // this.getView().setBusy(false);
-                    this.getView().getModel("ui").setProperty("/isEditable", true);
                 }
             },
 
             _createNewDocument: async function () {
-                const listBinding = this.getAppComponent().getModel().bindList("/Project");
-                var a = await this.editFlow.createDocument(listBinding, {
-                    creationMode: "NewPage",
-                    data: {
-                        //,     // pass default value
-                    }
-                });
+                var aContexts = await this.getAppComponent().getModel().bindList("/Project").requestContexts();
+                this.getExtensionAPI().routing.navigate(aContexts[0],{preserveHistory: false});
             },
 
             onModelContextChange : async function(){

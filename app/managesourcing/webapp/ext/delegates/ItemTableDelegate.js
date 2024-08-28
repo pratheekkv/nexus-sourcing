@@ -1,8 +1,10 @@
 sap.ui.define([
     "sap/ui/mdc/TableDelegate",
     "sap/ui/mdc/Field",
-    "sap/ui/model/json/JSONModel"
-], function (TableDelegate,  FieldBase, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
+], function (TableDelegate,  FieldBase, JSONModel, Filter, FilterOperator) {
     "use strict";
 
     var MyTableDelegate = Object.assign({}, TableDelegate);
@@ -48,7 +50,7 @@ sap.ui.define([
                             dataType: "sap.ui.model.type." + datatype
                         })
         
-                        oTable.addColumn(_addColumn(oTable,oTable.getId() + "---col-" + id, id));
+                        oTable.addColumn(_addColumn(oTable,oTable.getId() + "---col-" + id, id, datatype));
                       }
                         oTable.rebind();
                         return aProperties;
@@ -64,7 +66,7 @@ sap.ui.define([
         /**
          * Bind the columns to the table.
          */
-       var _addColumn = function (oTable,sId, sPropertyKey) {
+       var _addColumn = function (oTable,sId, sPropertyKey, datatype) {
  
         var field = new FieldBase({ value: { 
                                                 path : 'terms', 
@@ -78,10 +80,13 @@ sap.ui.define([
                                                       if(result.length < 1){
                                                         return;
                                                       }
-                                                      return parseInt(result[0].value);
-                                                 }.bind({key : sPropertyKey})
+                                                      if(datatype === "Integer")
+                                                        return parseInt(result[0].value);
+                                                      else
+                                                        return result[0].value;
+                                                 }.bind({key : sPropertyKey, datatype : datatype})
                                             },
-                                    editMode: "{=${ui>isEditable}=== true ? 'Editable' : 'ReadOnly'}"
+                                    editMode: "{=${ui>/isEditable}=== true ? 'Editable' : 'ReadOnly'}"
                });        
 
         var oColumn = new sap.ui.mdc.table.Column(sId,{
@@ -103,7 +108,11 @@ sap.ui.define([
         MyTableDelegate.addItem = async (oTable, sPropertyKey) => {
             // const oPropertyInfo = JSONPropertyInfo.find((oPI) => oPI.key === sPropertyKey);
             const sId = oTable.getId() + "---col-" + sPropertyKey;
-            return await _addColumn(oTable,sId, sPropertyKey);
+            var IsActiveEntity = await oTable.getBindingContext().requestProperty("IsActiveEntity");
+            const filters = [new Filter("id", FilterOperator.Eq, sPropertyKey)];
+            var termBinding = await oTable.getModel().getKeepAliveContext("/Term(id='" +eventId+"',IsActiveEntity="+IsActiveEntity+")" );
+            var dataType = await termBinding.requestProperty("datatype");
+            return await _addColumn(oTable,sId, sPropertyKey,dataType);
         };
 
         MyTableDelegate.updateBindingInfo = function (oTable, oBindingInfo) {

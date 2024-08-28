@@ -120,8 +120,16 @@ private void addDrillStateAndDistanceFromRoot(List<Task> rows, CqnSelect select)
 
 private void incrementLimitedDescendant(Map<String, Task> soByNodeId, String nodeId) {
     Task so = soByNodeId.get(nodeId);
+    System.out.println("Prathee >>> Node ID" + nodeId);
     if (so != null) {
-        long count = (Long) so.getOrDefault(LIMITED_DESCENDANT_COUNT, -1l);
+        Object ret = so.getOrDefault(LIMITED_DESCENDANT_COUNT, -1l);
+        if(ret == null){
+            System.out.println("Prathee >>> Node ID is null");
+            return;
+        }
+        
+        long count = (Long) ret;
+        System.out.println("Prathee >>> count-- " + count + "Node Id---" + nodeId );
         so.setLimitedDescendantCount(++count);
         incrementLimitedDescendant(soByNodeId, so.getParentId());
     }
