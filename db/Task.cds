@@ -13,7 +13,9 @@ entity Task :cuid, managed {
   status: Association to TaskStatus;
   owner: String;
   dueDate: Date;
+  event: Association to Event;
   approverReviewer: String;
+
   parent_id  : type of node_id;
 
   @Core.Computed: true

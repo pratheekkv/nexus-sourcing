@@ -107,7 +107,7 @@ sap.ui.define(
             var oSelectedContext = this.getView().byId('taskList').getSelectedContexts()[0];
             var taskType = null, parent_id = null;
             if(oSelectedContext){
-                taskType = await oSelectedContext?.requestProperty("type");
+                taskType = await oSelectedContext?.requestProperty("type_id");
                 if(taskType === "Phase"){ 
                     parent_id = await oSelectedContext?.requestProperty("node_id");
                 }
@@ -115,7 +115,7 @@ sap.ui.define(
             
             var data = {
                 node_id: " ",
-                type : "Task",
+                type_id : "Task",
                 parent_id : parent_id 
             };
 
@@ -134,7 +134,7 @@ sap.ui.define(
             var oSelectedContext = this.getView().byId('taskList').getSelectedContexts()[0];
             var taskType = null, phaseId = null;
             if(oSelectedContext){
-                taskType = await oSelectedContext?.requestProperty("type");
+                taskType = await oSelectedContext?.requestProperty("type_id");
                 if(taskType === "Phase"){ 
                     phaseId = await oSelectedContext?.requestProperty("node_id");
                 }
@@ -142,7 +142,7 @@ sap.ui.define(
             
             var data = {
                 node_id: " ",
-                type : "Phase",
+                type_id : "Phase",
                 parent_id : phaseId 
             };
 

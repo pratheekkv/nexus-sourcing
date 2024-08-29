@@ -34,11 +34,13 @@ sap.ui.define([
 
             return fetchModel(oTable)
 			.then(async (model) => {
+                debugger;
                 var aProperties = [];
                 try{
                     var oContext = oTable.getBindingContext();
-                    var aTerms = await oTable.getModel().bindList(oContext.getPath() + '/terms').requestContexts();
+                    var aTerms = await oTable.getModel().bindList(oContext.getPath() + '/terms',{$expand:'ranges($select=keyid,description'}).requestContexts();
                     for (const term of aTerms) { 
+                        var range = await term.requestObject('ranges');
                         var id = await term.requestProperty("id");
                         var description = await term.requestProperty("description");
                         var datatype = await term.requestProperty("datatype");
@@ -116,13 +118,17 @@ sap.ui.define([
         };
 
         MyTableDelegate.updateBindingInfo = function (oTable, oBindingInfo) {
- 
+            debugger;
             TableDelegate.updateBindingInfo.call(MyTableDelegate, oTable, oBindingInfo);
             if(!oTable.getBindingContext()){
                 return;
             }
             oBindingInfo.path = oTable.getBindingContext().getPath() + oTable.getPayload().bindingPath;
             oBindingInfo.parameters.$expand = 'terms($select=id,value)';
+            oBindingInfo.parameters.$count = true;
+            oBindingInfo.parameters.$$aggregation = {
+                hierarchyQualifier: "ItemHierarchy"
+            };
         };
 
         return MyTableDelegate;

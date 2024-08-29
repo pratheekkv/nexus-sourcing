@@ -426,6 +426,11 @@
       "kind": "entity",
       "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
       "@UI.CreateHidden": true,
+      "@UI.PresentationVariant#Default.$Type": "UI.PresentationVariantType",
+      "@UI.PresentationVariant#Default.Visualizations": [
+        "@UI.LineItem"
+      ],
+      "@UI.PresentationVariant#Default.InitialExpansionLevel": 4,
       "@UI.LineItem": [
         {
           "$Type": "UI.DataField",
@@ -444,29 +449,114 @@
         {
           "$Type": "UI.DataField",
           "Value": {
-            "=": "type"
+            "=": "type.description"
           },
           "@Common.FieldControl": {
             "#": "ReadOnly"
-          }
+          },
+          "Label": "Type"
         },
         {
           "$Type": "UI.DataField",
           "Value": {
-            "=": "status"
-          }
+            "=": "status.description"
+          },
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "Label": "Status"
         },
         {
           "$Type": "UI.DataField",
           "Value": {
             "=": "owner"
-          }
+          },
+          "Label": "Owner"
         },
         {
           "$Type": "UI.DataField",
           "Value": {
             "=": "dueDate"
-          }
+          },
+          "Label": "Due Date"
+        },
+        {
+          "$Type": "UI.DataFieldForAction",
+          "Action": "Sourcing.setStatus",
+          "Inline": true,
+          "@UI.Hidden": {
+            "$edmJson": {
+              "$Or": [
+                {
+                  "$Ne": [
+                    {
+                      "$Path": "type_id"
+                    },
+                    "Task"
+                  ]
+                },
+                {
+                  "$Ne": [
+                    {
+                      "$Path": "status_id"
+                    },
+                    "NS"
+                  ]
+                }
+              ]
+            }
+          },
+          "Label": "Set to In-Progress"
+        }
+      ],
+      "@UI.LineItem#EventTasks": [
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "node_id"
+          },
+          "Label": "ID"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "description"
+          },
+          "Label": "Description"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "type.description"
+          },
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "Label": "Type"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "status.description"
+          },
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "Label": "Status"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "owner"
+          },
+          "Label": "Owner"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "dueDate"
+          },
+          "Label": "Due Date"
         }
       ],
       "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.$Type": "Hierarchy.RecursiveHierarchyType",
@@ -671,6 +761,22 @@
         "dueDate": {
           "type": "cds.Date"
         },
+        "event": {
+          "type": "cds.Association",
+          "target": "Sourcing.Event",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "$generatedFieldName": "event_ID"
+            }
+          ]
+        },
+        "event_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "event"
+        },
         "approverReviewer": {
           "type": "cds.String"
         },
@@ -820,6 +926,12 @@
         }
       },
       "actions": {
+        "setStatus": {
+          "kind": "action",
+          "returns": {
+            "type": "Sourcing.Task"
+          }
+        },
         "draftPrepare": {
           "kind": "action",
           "returns": {
@@ -837,6 +949,45 @@
     "Sourcing.Event": {
       "kind": "entity",
       "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
+      "@UI.ConnectedFields#ConnectedData.Label": "Event Bidding End",
+      "@UI.ConnectedFields#ConnectedData.Template": "{biddingEnd} - {biidingEndUnit}",
+      "@UI.ConnectedFields#ConnectedData.Data.biddingEnd.$Type": "UI.DataField",
+      "@UI.ConnectedFields#ConnectedData.Data.biddingEnd.Value": {
+        "=": "biddingEnd"
+      },
+      "@UI.ConnectedFields#ConnectedData.Data.biddingEnd.@UI.Importance": {
+        "#": "High"
+      },
+      "@UI.ConnectedFields#ConnectedData.Data.biddingEndUnit.$Type": "UI.DataField",
+      "@UI.ConnectedFields#ConnectedData.Data.biddingEndUnit.Value": {
+        "=": "biidingEndUnit"
+      },
+      "@UI.ConnectedFields#ConnectedData.Data.biddingEndUnit.@UI.Importance": {
+        "#": "High"
+      },
+      "@UI.FieldGroup#BiddingRules.Data": [
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "startBidOnPublish"
+          },
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "Label": "Start bidding right after event is published"
+        },
+        {
+          "$Type": "UI.DataFieldForAnnotation",
+          "Target": "@UI.ConnectedFields#ConnectedData"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "awardDate"
+          },
+          "Label": "Estimated Award Date"
+        }
+      ],
       "@UI.LineItem": [
         {
           "$Type": "UI.DataField",
@@ -848,7 +999,7 @@
         {
           "$Type": "UI.DataField",
           "Value": {
-            "=": "type"
+            "=": "type_id"
           },
           "Label": "Event Type"
         },
@@ -995,7 +1146,23 @@
           "type": "cds.String"
         },
         "type": {
-          "type": "cds.String"
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.EventType",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "type_id"
+            }
+          ],
+          "@Common.ValueList.viaAssociation": {
+            "=": "type"
+          }
+        },
+        "type_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "type"
         },
         "version": {
           "type": "cds.String"
@@ -1014,6 +1181,16 @@
         },
         "awardDate": {
           "type": "cds.Date"
+        },
+        "startBidOnPublish": {
+          "type": "cds.Boolean"
+        },
+        "biddingEnd": {
+          "type": "cds.Integer"
+        },
+        "biidingEndUnit": {
+          "type": "cds.String",
+          "length": 6
         },
         "items": {
           "type": "cds.Composition",
@@ -1068,6 +1245,27 @@
               "ref": [
                 "terms",
                 "Event"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "eventTasks": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Sourcing.Task",
+          "on": [
+            {
+              "ref": [
+                "eventTasks",
+                "event"
               ]
             },
             "=",
@@ -1178,27 +1376,27 @@
     "Sourcing.Item": {
       "kind": "entity",
       "doc": "Aspect for entities with canonical universal IDs\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-cuid",
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.$Type": "Hierarchy.RecursiveHierarchyType",
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.ExternalKey": null,
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.LimitedDescendantCount": {
+      "@Hierarchy.RecursiveHierarchy#ItemHierarchy.$Type": "Hierarchy.RecursiveHierarchyType",
+      "@Hierarchy.RecursiveHierarchy#ItemHierarchy.ExternalKey": null,
+      "@Hierarchy.RecursiveHierarchy#ItemHierarchy.LimitedDescendantCount": {
         "=": "LimitedDescendantCount"
       },
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.DistanceFromRoot": {
+      "@Hierarchy.RecursiveHierarchy#ItemHierarchy.DistanceFromRoot": {
         "=": "DistanceFromRoot"
       },
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.DrillState": {
+      "@Hierarchy.RecursiveHierarchy#ItemHierarchy.DrillState": {
         "=": "DrillState"
       },
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.Matched": {
+      "@Hierarchy.RecursiveHierarchy#ItemHierarchy.Matched": {
         "=": "Matched"
       },
-      "@Hierarchy.RecursiveHierarchy#PhaseHierarchy.MatchedDescendantCount": {
+      "@Hierarchy.RecursiveHierarchy#ItemHierarchy.MatchedDescendantCount": {
         "=": "MatchedDescendantCount"
       },
-      "@Aggregation.RecursiveHierarchy#PhaseHierarchy.NodeProperty": {
+      "@Aggregation.RecursiveHierarchy#ItemHierarchy.NodeProperty": {
         "=": "node_id"
       },
-      "@Aggregation.RecursiveHierarchy#PhaseHierarchy.ParentNavigationProperty": {
+      "@Aggregation.RecursiveHierarchy#ItemHierarchy.ParentNavigationProperty": {
         "=": "parent"
       },
       "@Capabilities.FilterRestrictions.NonFilterableProperties": [
@@ -1252,6 +1450,25 @@
         },
         "parent_id": {
           "type": "cds.String"
+        },
+        "itemType": {
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.ItemType",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "itemType_id"
+            }
+          ],
+          "@Common.ValueList.viaAssociation": {
+            "=": "itemType"
+          }
+        },
+        "itemType_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "itemType"
         },
         "LimitedDescendantCount": {
           "@Core.Computed": true,
@@ -1439,6 +1656,49 @@
     "Sourcing.Supplier": {
       "kind": "entity",
       "doc": "Aspect to capture changes by user and name\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-managed",
+      "@UI.LineItem": [
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "orgName"
+          },
+          "Label": "Organization Name"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "contact"
+          },
+          "Label": "Contact Name"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "riskLevel"
+          },
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "Label": "Risk Level"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "incumbentSupplier"
+          },
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "Label": "Is this an incumbent supplier?"
+        },
+        {
+          "$Type": "UI.DataField",
+          "Value": {
+            "=": "excludedSupplier"
+          },
+          "Label": "Is this an excluded supplier?"
+        }
+      ],
       "projection": {
         "from": {
           "ref": [
@@ -1686,6 +1946,30 @@
         },
         "datatype": {
           "type": "cds.String"
+        },
+        "isMultiInput": {
+          "type": "cds.Boolean"
+        },
+        "ranges": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Sourcing.TermRange",
+          "on": [
+            {
+              "ref": [
+                "ranges",
+                "term"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
         },
         "IsActiveEntity": {
           "type": "cds.Boolean",
@@ -2582,7 +2866,20 @@
           "type": "cds.String"
         },
         "type": {
-          "type": "cds.String"
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.EventType",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "type_id"
+            }
+          ]
+        },
+        "type_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "type"
         },
         "version": {
           "type": "cds.String"
@@ -2601,6 +2898,16 @@
         },
         "awardDate": {
           "type": "cds.Date"
+        },
+        "startBidOnPublish": {
+          "type": "cds.Boolean"
+        },
+        "biddingEnd": {
+          "type": "cds.Integer"
+        },
+        "biidingEndUnit": {
+          "type": "cds.String",
+          "length": 6
         },
         "items": {
           "type": "cds.Composition",
@@ -2664,6 +2971,40 @@
               ]
             }
           ]
+        },
+        "eventTasks": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "com.sap.sourcing.db.Task",
+          "on": [
+            {
+              "ref": [
+                "eventTasks",
+                "event"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "com.sap.sourcing.db.EventType": {
+      "kind": "entity",
+      "@cds.odata.valuelist": true,
+      "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
         }
       }
     },
@@ -2683,6 +3024,22 @@
         },
         "parent_id": {
           "type": "cds.String"
+        },
+        "itemType": {
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.ItemType",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "itemType_id"
+            }
+          ]
+        },
+        "itemType_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "itemType"
         },
         "LimitedDescendantCount": {
           "@Core.Computed": true,
@@ -2769,6 +3126,19 @@
               ]
             }
           ]
+        }
+      }
+    },
+    "com.sap.sourcing.db.ItemType": {
+      "kind": "entity",
+      "@cds.odata.valuelist": true,
+      "elements": {
+        "id": {
+          "key": true,
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
         }
       }
     },
@@ -2953,6 +3323,75 @@
         },
         "datatype": {
           "type": "cds.String"
+        },
+        "isMultiInput": {
+          "type": "cds.Boolean"
+        },
+        "ranges": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "com.sap.sourcing.db.TermRange",
+          "on": [
+            {
+              "ref": [
+                "ranges",
+                "term"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "com.sap.sourcing.db.TermRange": {
+      "kind": "entity",
+      "doc": "Aspect for entities with canonical universal IDs\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-cuid",
+      "includes": [
+        "cuid"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "term": {
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.Terms",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "term_id"
+            },
+            {
+              "ref": [
+                "Event_ID"
+              ],
+              "$generatedFieldName": "term_Event_ID"
+            }
+          ]
+        },
+        "term_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "term"
+        },
+        "term_Event_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "term"
+        },
+        "keyid": {
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
         }
       }
     },
@@ -3094,6 +3533,22 @@
         },
         "dueDate": {
           "type": "cds.Date"
+        },
+        "event": {
+          "type": "cds.Association",
+          "target": "com.sap.sourcing.db.Event",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "$generatedFieldName": "event_ID"
+            }
+          ]
+        },
+        "event_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "event"
         },
         "approverReviewer": {
           "type": "cds.String"
@@ -3974,6 +4429,151 @@
           "@Common.Label": "{i18n>TimeZoneCode}"
         }
       }
+    },
+    "Sourcing.TermRange": {
+      "kind": "entity",
+      "doc": "Aspect for entities with canonical universal IDs\n\nSee https://cap.cloud.sap/docs/cds/common#aspect-cuid",
+      "@cds.autoexposed": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "com.sap.sourcing.db.TermRange"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "term": {
+          "type": "cds.Association",
+          "target": "Sourcing.Terms",
+          "keys": [
+            {
+              "ref": [
+                "id"
+              ],
+              "$generatedFieldName": "term_id"
+            },
+            {
+              "ref": [
+                "Event_ID"
+              ],
+              "$generatedFieldName": "term_Event_ID"
+            }
+          ]
+        },
+        "term_id": {
+          "type": "cds.String",
+          "@odata.foreignKey4": "term"
+        },
+        "term_Event_ID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "term"
+        },
+        "keyid": {
+          "type": "cds.String"
+        },
+        "description": {
+          "type": "cds.String"
+        },
+        "IsActiveEntity": {
+          "type": "cds.Boolean",
+          "key": true,
+          "default": {
+            "val": true
+          },
+          "@UI.Hidden": true
+        },
+        "HasActiveEntity": {
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          },
+          "notNull": true,
+          "@UI.Hidden": true
+        },
+        "HasDraftEntity": {
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          },
+          "notNull": true,
+          "@UI.Hidden": true
+        },
+        "DraftAdministrativeData": {
+          "type": "cds.Association",
+          "target": "Sourcing.DraftAdministrativeData",
+          "keys": [
+            {
+              "ref": [
+                "DraftUUID"
+              ],
+              "$generatedFieldName": "DraftAdministrativeData_DraftUUID"
+            }
+          ],
+          "cardinality": {
+            "max": 1
+          },
+          "@odata.contained": true,
+          "@UI.Hidden": true
+        },
+        "DraftAdministrativeData_DraftUUID": {
+          "type": "cds.UUID",
+          "@odata.foreignKey4": "DraftAdministrativeData",
+          "@odata.contained": true,
+          "@UI.Hidden": true
+        },
+        "SiblingEntity": {
+          "type": "cds.Association",
+          "target": "Sourcing.TermRange",
+          "cardinality": {
+            "max": 1
+          },
+          "on": [
+            {
+              "ref": [
+                "SiblingEntity",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "SiblingEntity",
+                "IsActiveEntity"
+              ]
+            },
+            "!=",
+            {
+              "ref": [
+                "IsActiveEntity"
+              ]
+            }
+          ]
+        }
+      },
+      "actions": {
+        "draftPrepare": {
+          "kind": "action",
+          "returns": {
+            "type": "Sourcing.TermRange"
+          },
+          "params": {
+            "SideEffectsQualifier": {
+              "type": "cds.String"
+            }
+          }
+        }
+      },
+      "@Common.DraftNode.PreparationAction": "draftPrepare"
     },
     "DRAFT.DraftAdministrativeData": {
       "kind": "entity",
