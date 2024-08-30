@@ -1,0 +1,2 @@
+sap.ui.define(["sap/m/IconTabHeader"],function(e){"use strict";return e.extend("managesourcing.control.IconTab.IconTabHeader",{init:function(){if(sap.m.IconTabHeader.prototype.init){sap.m.IconTabHeader.prototype.init.apply(this,arguments)}},setSelectedItem:function(e,t){if(this.getSelectedKey()===e.mProperties.key){return}if(!this.validateTab(e.mProperties.key)){return}if(sap.m.IconTabHeader.prototype.setSelectedItem){sap.m.IconTabHeader.prototype.setSelectedItem.apply(this,arguments)}},renderer:{}})});
+//# sourceMappingURL=IconTabHeader.js.map

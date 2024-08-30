@@ -1,0 +1,156 @@
+{
+    "_version": "1.59.0",
+    "sap.app": {
+        "id": "managesourcing",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap/generator-fiori:fpm",
+            "version": "1.14.3",
+            "toolsId": "3bb3de2d-0315-4cbc-b2e8-ef2b763d747c"
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "SourcingProject-manage": {
+                    "signature": {
+                        "parameters": {},
+                        "additionalParameters": "allowed"
+                    },
+                    "semanticObject": "SourcingProject",
+                    "action": "manage"
+                }
+            }
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "odata/v4/Sourcing/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "odataVersion": "4.0"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": false,
+        "dependencies": {
+            "minUI5Version": "1.127.1",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ushell": {},
+                "sap.fe.templates": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "managesourcing.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            },
+            "@i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            }
+        },
+        "resources": {
+            "css": []
+        },
+        "routing": {
+            "config": {},
+            "routes": [
+                {
+                    "name": "ProjectMain",
+                    "pattern": ":?query:",
+                    "target": "ProjectMain"
+                },
+                {
+                    "name": "Details",
+                    "pattern": "Project({key})",
+                    "target": "Details"
+                },
+                {
+                    "name": "Event",
+                    "pattern": "Project({key})/events({key2}):?query:",
+                    "target": "EventDetails"
+                }
+            ],
+            "targets": {
+                "ProjectMain": {
+                    "type": "Component",
+                    "id": "ProjectMain",
+                    "name": "sap.fe.core.fpm",
+                    "options": {
+                        "settings": {
+                            "viewName": "managesourcing.ext.main.Main",
+                            "contextPath": "/Project"
+                        }
+                    }
+                },
+                "Details": {
+                    "type": "Component",
+                    "id": "Details",
+                    "name": "sap.fe.core.fpm",
+                    "options": {
+                        "settings": {
+                            "viewName": "managesourcing.ext.main.Main",
+                            "contextPath": "/Project"
+                        }
+                    }
+                },
+                "EventDetails": {
+                    "type": "Component",
+                    "id": "ProjectMain",
+                    "name": "sap.fe.core.fpm",
+                    "options": {
+                        "settings": {
+                            "viewName": "managesourcing.ext.event.SourcingEvent",
+                            "contextPath": "/Project/events"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "sap.cloud": {
+        "public": true,
+        "service": "nexus.sourcing"
+    }
+}

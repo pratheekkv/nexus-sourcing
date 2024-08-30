@@ -1,0 +1,73 @@
+<mvc:View xmlns:form="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+        xmlns:macros="sap.fe.macros"
+		xmlns:macrosTable="sap.fe.macros.table"
+		xmlns:customITB="managesourcing.control.IconTab"
+		xmlns="sap.m" controllerName="managesourcing.ext.main.Main"
+        modelContextChange="onModelContextChange">
+		<Page title="Manage Sourcing Project">
+		<content>
+		<customITB:IconTab id="iconTabBar" select="onTabSelect" expandable="false" headerMode="Inline" stretchContentHeight="true"
+		backgroundDesign="Transparent" applyContentPadding="false" class="sapUiResponsiveContentPadding"
+		selectedKey="{view>/selectedTabKey}" >
+			<customITB:items>
+					<IconTabFilter id="Summary" key="Summary" icon="sap-icon://manager-insight" text="Project Summary" >
+						<HBox width="100%" justifyContent="End">
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
+						</HBox>	
+						<macros:Form metaPath="@UI.FieldGroup#GeneralInformation" id="overview">
+							<macros:layout type="ResponsiveGridLayout" columnsM="1" singleContainerFullSize="true" labelSpanL="1" labelSpanM="1" labelSpanS="1" emptySpanL="7" />
+						</macros:Form>
+						<macros:Form metaPath="@UI.FieldGroup#ExternalSystemIntegration" id="externalSystemIntegration">
+							<macros:layout type="ResponsiveGridLayout" columnsM="1" singleContainerFullSize="true" labelSpanL="1" labelSpanM="1" labelSpanS="1" emptySpanL="7" />
+						</macros:Form>	
+                    </IconTabFilter>
+
+
+					<IconTabFilter id="Tasks" key="Tasks" icon="sap-icon://pie-chart" text="Tasks">
+						<HBox width="100%" justifyContent="End">
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
+						</HBox>											
+                        <macros:TreeTable metaPath="tasks/@com.sap.vocabularies.UI.v1.LineItem" id="taskList" headerVisible="false" 
+							selectionMode="Single" busy="{ui>/isBusy}" hierarchyQualifier="PhaseHierarchy" rowPress="onTaskRowPress">
+							<creationMode name="Inline" inlineCreationRowsHiddenInEditMode="true"   />
+								<macros:actions>
+									<macrosTable:ActionGroup text="Create" key="createActionGroup" id ="actionGroup">
+										<macrosTable:Action text="Create Phase" press=".createPhase" />
+										<macrosTable:Action text="Create Task" press=".createTask"  />
+									</macrosTable:ActionGroup>
+								</macros:actions>
+							</macros:TreeTable>
+                    </IconTabFilter>
+
+
+
+					<IconTabFilter id="Events" key="Events" icon="sap-icon://batch-payments" text="Events and Documents">
+						<HBox width="100%" justifyContent="End">
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
+						</HBox>	
+                        <macros:Table metaPath="events/@com.sap.vocabularies.UI.v1.LineItem" id="EventsTable" selectionMode="Single" rowPress="onEventNav" />
+                    </IconTabFilter>
+
+
+
+					<IconTabFilter id="MessageBoard" key="MessageBoard" icon="sap-icon://message-popup" text="Message Board">
+					<HBox width="100%" justifyContent="End">
+							<Button text="Edit" press="onEdit" visible="{= !${ui>/isEditable}}"/>
+					</HBox>	
+                        <macros:Table metaPath="messages/@com.sap.vocabularies.UI.v1.LineItem" readOnly="true" id="MessageBoardTable" />
+                    </IconTabFilter>
+			</customITB:items>
+		</customITB:IconTab>
+		</content>
+					<footer>
+						<OverflowToolbar>
+							<ToolbarSpacer/>
+							<Button text="Save" type="Emphasized" visible="{ui>/isEditable}" press="handleWizardSave" />
+							<Button	text="Cancel" type="Transparent" visible="{ui>/isEditable}" press="handleWizardCancel"/>
+						</OverflowToolbar>
+					</footer>		
+	</Page>
+</mvc:View>

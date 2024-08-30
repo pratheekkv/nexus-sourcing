@@ -1,0 +1,2 @@
+sap.ui.define(["sap/m/IconTabBar","managesourcing/control/IconTab/IconTabHeader"],function(e,a){return e.extend("managesourcing.control.IconTab.IconTab",{metadata:{aggregations:{_header:{type:"managesourcing.control.IconTab.IconTabHeader",multiple:false,visibility:"hidden"}}},_getIconTabHeader:function(){var e=this.getAggregation("_header");if(!e){e=new a(this.getId()+"--header",{});this.setAggregation("_header",e,true)}return e},renderer:{}})});
+//# sourceMappingURL=IconTab.js.map
