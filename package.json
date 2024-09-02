@@ -5,13 +5,20 @@
   "license": "ISC",
   "repository": "<Add your repository here>",
   "sapux": [
-    "app/managesourcing"
+    "app/managesourcing",
+    "app/nexus.supplier"
   ],
   "devDependencies": {
     "@sap/cds-dk": "^8",
-    "@sap/ux-specification": "^1.120.17"
+    "@sap/ux-specification": "^1.120.17",
+    "rimraf": "^5.0.5"
   },
   "dependencies": {
     "@sap/xssec": "^4.2.1"
+  },
+  "scripts": {
+    "undeploy": "cf undeploy nexus-sourcing --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
   }
 }

@@ -89,9 +89,23 @@ modules:
       - managesourcing.zip
       name: managesourcing
       target-path: resources/
+    - artifacts:
+      - nexussupplier.zip
+      name: nexussupplier
+      target-path: resources/
 - name: managesourcing
   type: html5
   path: app/managesourcing
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: nexussupplier
+  type: html5
+  path: app/nexus.supplier
   build-parameters:
     build-result: dist
     builder: custom

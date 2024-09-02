@@ -1,0 +1,13 @@
+//@ui5-bundle nexus/supplier/Component-preload.js
+sap.ui.require.preload({
+	"nexus/supplier/Component.js":function(){
+sap.ui.define(["sap/fe/core/AppComponent"],function(e){"use strict";return e.extend("nexus.supplier.Component",{metadata:{manifest:"json"}})});
+},
+	"nexus/supplier/ext/main/Main.controller.js":function(){
+sap.ui.define(["sap/fe/core/PageController"],function(e){"use strict";return e.extend("nexus.supplier.ext.main.Main",{})});
+},
+	"nexus/supplier/ext/main/Main.view.xml":'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros"\n    xmlns:html="http://www.w3.org/1999/xhtml" controllerName="nexus.supplier.ext.main.Main"><Page id="Main" title="{i18n>MainTitle}"><content></content></Page></mvc:View>',
+	"nexus/supplier/i18n/i18n.properties":'# This is the resource bundle for nexus.supplier\n\n#Texts for manifest.json\n\n#XTIT: Application name\nappTitle=Supplier \n\n#YDES: Application description\nappDescription=An SAP Fiori application.\n#XTIT: Custom view title\nMainTitle=Main',
+	"nexus/supplier/manifest.json":'{"_version":"1.59.0","sap.app":{"id":"nexus.supplier","type":"application","i18n":"i18n/i18n.properties","applicationVersion":{"version":"0.0.1"},"title":"{{appTitle}}","description":"{{appDescription}}","resources":"resources.json","sourceTemplate":{"id":"@sap/generator-fiori:fpm","version":"1.14.3","toolsId":"0e0e5a61-489e-486b-8a1a-53bcc026c336"},"dataSources":{"mainService":{"uri":"odata/v4/Sourcing/","type":"OData","settings":{"annotations":[],"odataVersion":"4.0"}}}},"sap.ui":{"technology":"UI5","icons":{"icon":"","favIcon":"","phone":"","phone@2":"","tablet":"","tablet@2":""},"deviceTypes":{"desktop":true,"tablet":true,"phone":true}},"sap.ui5":{"flexEnabled":true,"dependencies":{"minUI5Version":"1.127.1","libs":{"sap.m":{},"sap.ui.core":{},"sap.ushell":{},"sap.fe.templates":{}}},"contentDensities":{"compact":true,"cozy":true},"models":{"i18n":{"type":"sap.ui.model.resource.ResourceModel","settings":{"bundleName":"nexus.supplier.i18n.i18n"}},"":{"dataSource":"mainService","preload":true,"settings":{"operationMode":"Server","autoExpandSelect":true,"earlyRequests":true}},"@i18n":{"type":"sap.ui.model.resource.ResourceModel","uri":"i18n/i18n.properties"}},"resources":{"css":[]},"routing":{"config":{},"routes":[{"name":"ProjectMain","pattern":":?query:","target":"ProjectMain"}],"targets":{"ProjectMain":{"type":"Component","id":"ProjectMain","name":"sap.fe.core.fpm","options":{"settings":{"navigation":{},"contextPath":"/Project","viewName":"nexus.supplier.ext.main.Main"}}}}}},"sap.cloud":{"public":true,"service":"nexus.sourcing"}}'
+});
+//# sourceMappingURL=Component-preload.js.map

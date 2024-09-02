@@ -83,7 +83,7 @@ public void beforeItemRead(CdsReadEventContext event) {
     logger.info("Pratheek >> Original CQN {}", cqn.toString());
     if (!CqnAnalyzer.isCountQuery(cqn)) {
         itemTreeUtil.calcLimitedDescendantsCount = cqn.items().stream().flatMap(i -> i.ofValue())
-                .anyMatch(v -> cds.gen.sourcing.Task.LIMITED_DESCENDANT_COUNT.equals(v.displayName()));
+                .anyMatch(v -> cds.gen.sourcing.Item.LIMITED_DESCENDANT_COUNT.equals(v.displayName()));
 
         ItemExpandExpressionVisitor visitor = new ItemExpandExpressionVisitor();
         event.getCqn().accept(visitor);
@@ -102,11 +102,16 @@ public void beforeItemRead(CdsReadEventContext event) {
 
 @After(event = CqnService.EVENT_READ, entity = Item_.CDS_NAME)
 public void afterItemRead(CdsReadEventContext event) {
+    try{
     Result result = event.getResult();
     CqnSelect cqn = event.getCqn();
-
+    List<Item> items = result.listOf(Item.class);
+    logger.info("Pratheek Result {} ", items.size());
     itemTreeUtil.addDrillStateAndDistanceFromRoot(result.listOf(Item.class), cqn);
     event.setResult(result);
+    }catch(Exception ex){
+        logger.error("Pratheek >>> Found Error ", ex);
+    }
 }
 
 @Before(event = DraftService.EVENT_DRAFT_CREATE, entity = Task_.CDS_NAME)
